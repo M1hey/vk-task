@@ -42,6 +42,7 @@ function init()
 function create_connection($db_opts)
 {
     $connection = mysqli_connect($db_opts[DB_HOST], $db_opts[DB_USER], $db_opts[DB_PASSWORD], $db_opts[DB_DATABASE]);
+    mysqli_set_charset($connection, "utf8");
 
     if (mysqli_connect_errno()) {
         // usually it will be error_log(msg, 1, admin@email.ru);

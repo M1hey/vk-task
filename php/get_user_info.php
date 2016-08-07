@@ -2,9 +2,6 @@
 //session_start();
 require_once 'model/db.php';
 
-global $database_connections;
-
-
 $login = $_GET['login'];
 $pwd = $_GET['pwd'];
 $q = "SELECT id, login, username, password_hash, account_type, balance FROM users WHERE login=?";
