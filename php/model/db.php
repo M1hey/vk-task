@@ -17,7 +17,6 @@ function query($db, $query_statement, $types, &$vars)
 
     $stmt = mysqli_prepare($database_connections[$db], $query_statement);
 
-    // TODO   error handling if(ok), etc
     if (!mysqli_stmt_bind_param($stmt, $types, $vars)) return false;
     if (!mysqli_stmt_execute($stmt)) return false;
     $result = mysqli_stmt_get_result($stmt);
@@ -47,7 +46,6 @@ function create_connection($db_opts)
     if (mysqli_connect_errno()) {
         // usually it will be error_log(msg, 1, admin@email.ru);
         error_log("Can't connect: " . mysqli_connect_error(), 0);
-        // TODO: throw exception or something
         exit();
     }
 
