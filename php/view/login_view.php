@@ -1,25 +1,29 @@
 <head>
     <link href="/css/login.css" rel="stylesheet" media="screen"/>
+    <script src="/js/login.js" type="text/javascript"></script>
 </head>
+<script type="text/javascript">
+    $(document).ready(function () {
+        change_page_url('Вход в систему', '/login');
+    });
+</script>
 <div class="container">
     <div class="row">
         <h1>Вход в систему</h1>
-        <div class="login-form">
+        <div class="login-panel">
             <div class="err" id="add_err"></div>
             <fieldset>
-                <form class="form-narrow form-horizontal" method="post" action="login.php">
+                <form class="login-form form-narrow form-horizontal" method="post" action="login.php">
                     <!--TODO show errors, info-->
                     <fieldset>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="inputLogin" placeholder="Логин"
-                                   name="login"/>
+                            <input name="login" type="text" class="form-control" placeholder="Логин"/>
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control" id="inputPassword" placeholder="Пароль"
-                                   name="password"/>
+                            <input name="password" type="password" class="form-control" placeholder="Пароль"/>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-default btn-primary btn-sm btn-block">Login</button>
+                            <button type="submit" class="btn btn-default btn-primary btn-sm btn-block">Войти</button>
                         </div>
                     </fieldset>
                 </form>

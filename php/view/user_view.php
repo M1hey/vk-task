@@ -1,3 +1,14 @@
+<?php
+//TODO is it ok like that?
+$account_name = $_SESSION['username'];
+$acc_balance = $_SESSION['balance'];
+$sys_balance = $_SESSION['sys_balance'];
+?>
+<script type="text/javascript">
+    $(document).ready(function () {
+        change_page_url('Страница пользователя', '/user');
+    });
+</script>
 <div class="container">
     <div class="row header">
         <h1><a href="/"><span>Лента</span> <span>Заказов</span></a></h1>
@@ -21,7 +32,8 @@
                     </div>
                     <div class="action-button bordered-top text-center">
                         <button class="btn btn-primary" type="submit">Создать задачу</button>
-                        <a href="./?logout" <button class="btn btn-link" type="submit">Выйти</button>
+                        <a href="./?logout"
+                        <button class="btn btn-link" type="submit">Выйти</button>
                     </div>
                 </div>
             </div>
