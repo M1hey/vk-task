@@ -7,8 +7,8 @@
 
     <title>Test task</title>
 
-    <link href="/css/style.css" rel="stylesheet" type="text/css"/>
     <link href="/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="/css/style.css" rel="stylesheet" type="text/css"/>
 
     <script src="/js/jquery-1.6.2.js" type="text/javascript"></script>
     <script src="/js/common.js" type="text/javascript"></script>

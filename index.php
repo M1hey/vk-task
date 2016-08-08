@@ -1,6 +1,4 @@
 <?php
-define('ROOT', dirname(__DIR__) . '/php/');
-
 require_once 'php/model/session.php';
 
 session_start();

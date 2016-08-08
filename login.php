@@ -11,7 +11,7 @@ session_start();
 //    $user = get_user_by_auth_token($_GET['login'], $_GET['token_from_cookie']);
 //}
 
-$user = login_user($_POST['login'], $_POST['pwd']);
+$user = login_user($_POST['login'], $_POST['password']);
 
 if ($user) {
     $_SESSION['logged_in'] = true; // TODO set auth cookie
