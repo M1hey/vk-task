@@ -8,21 +8,26 @@ $(document).ready(function () {
             type: form.attr('method'),
             url: form.attr('action'),
             data: form.serialize(),
-            success: function (html) {
-                if (html) {
-                    update_page_content(html);
+            success: function (data) {
+                if (data) {
+                    update_page_content(data);
                 } else {
-                    // TODO error handling
-                    $("#add_err").css('display', 'inline', 'important');
-                    $("#add_err").html("<img src='images/alert.png' />Wrong username or password");
+                    show_login_error("Неправильный логин или пароль");
                 }
+            },
+            error: function (qxXHR, status, error) {
+                msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
+                show_login_error(msg);
             },
             beforeSend: function () {
                 // TODO show loading state
-                $("#add_err").css('display', 'inline', 'important');
-                $("#add_err").html("<img src='images/ajax-loader.gif' /> Loading...")
             }
         });
         return false;
     });
 });
+
+function show_login_error(msg) {
+    $(".alert").css('display', 'block', 'important');
+    $("#err_msg").html(msg);
+}

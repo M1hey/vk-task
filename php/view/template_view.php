@@ -15,7 +15,8 @@
 </head>
 <body>
 <div id="content-wrapper" class="content-wrapper">
-    <?php include dirname(__DIR__) . "/view/" . $view; ?> <!--TODO is it safe to use include?-->
+    <?php global $view;
+    include dirname(__DIR__) . "/view/" . $view; ?>
 </div>
 </body>
 </html>

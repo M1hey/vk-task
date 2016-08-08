@@ -1,5 +1,5 @@
 <?php
-//TODO is it ok like that?
+//TODO it is controller !!!
 $account_name = $_SESSION['username'];
 $acc_balance = $_SESSION['balance'];
 $sys_balance = $_SESSION['sys_balance'];
