@@ -1,9 +1,14 @@
 <?php
 define('ROOT', dirname(__DIR__) . '/php/');
 
-require_once 'php/model/user/user.php';
+require_once 'php/model/session.php';
 
-$user = get_user($_GET['login'], $_GET['pwd']);
+session_start();
+
+session_check();
+$user = get_user_by_auth_token($_GET['login'], $_GET['token_from_cookie']);
+
+//$user = login_user($_GET['login'], $_GET['pwd']);
 
 $account_name = $user['name'];
 $acc_balance = $user['balance'];
