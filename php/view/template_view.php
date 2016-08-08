@@ -10,11 +10,11 @@
     <link href="/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"/>
     <link href="/css/style.css" rel="stylesheet" type="text/css"/>
 
-    <script src="/js/jquery-1.6.2.js" type="text/javascript"></script>
+    <script src="/js/jquery-3.1.0.js" type="text/javascript"></script>
     <script src="/js/common.js" type="text/javascript"></script>
 </head>
 <body>
-<div class="wrapper">
+<div id="content-wrapper" class="content-wrapper">
     <?php include dirname(__DIR__) . "/view/" . $view; ?> <!--TODO is it safe to use include?-->
 </div>
 </body>
