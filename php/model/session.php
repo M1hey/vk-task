@@ -13,10 +13,11 @@ function session_init() {
 function session_check() {
     session_init();
 
-    if (isset($_GET['LOGOUT']) ||
+    if (isset($_GET['logout']) ||
         $_SERVER['REMOTE_ADDR'] !== $_SESSION['PREV_REMOTEADDR'] ||
         $_SERVER['HTTP_USER_AGENT'] !== $_SESSION['PREV_USERAGENT']
     ) {
+        session_unset();
         session_destroy();
     }
 
@@ -43,6 +44,7 @@ function session_check_auth_token($validator_string, $token) {
         's', $token);
 
     if ($validator_hash && hash_equals(hash("sha256", $validator_string), $validator_hash[0])) {
+        //TODO: validator_hash should be also generated
         //TODO: regenerate token
         return $validator_hash[1];
     }
