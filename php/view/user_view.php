@@ -1,9 +1,3 @@
-<?php
-//TODO it is controller !!!
-$account_name = $_SESSION['username'];
-$acc_balance = $_SESSION['balance'];
-$sys_balance = $_SESSION['sys_balance'];
-?>
 <script type="text/javascript">
     $(document).ready(function () {
         change_page_url('Страница пользователя', '/user');
@@ -17,17 +11,23 @@ $sys_balance = $_SESSION['sys_balance'];
         <div class="row">
             <div class="col-md-3 col-sm-6 well">
                 <div class="sidebar">
-                    <h3 class="account-name text-center"><?php echo $account_name; ?></h3>
+                    <h3 class="account-name text-center">
+                        <?php global $account_name;
+                        echo $account_name; ?></h3>
                     <div class="row account-state">
                         <div class="row">
                             <label class="col-md-6 col-md-offset-2 col-sm-6 col-sm-offset-2"
                                    for="acc_balance">Баланс:</label>
-                            <div id="acc_balance" class="col-md-2 col-sm-2"><?php echo $acc_balance; ?></div>
+                            <div id="acc_balance" class="col-md-2 col-sm-2">
+                                <?php global $acc_balance;
+                                echo $acc_balance; ?></div>
                         </div>
                         <div class="row">
                             <label class="col-sm-6 col-md-offset-2 col-sm-6 col-sm-offset-2 text-nowrap"
                                    for="sys_balance">Баланс системы:</label>
-                            <div id="sys_balance" class="col-md-2 col-sm-2"><?php echo $sys_balance; ?></div>
+                            <div id="sys_balance" class="col-md-2 col-sm-2">
+                                <?php global $sys_balance;
+                                echo $sys_balance; ?></div>
                         </div>
                     </div>
                     <div class="action-button bordered-top text-center">

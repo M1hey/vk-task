@@ -21,20 +21,11 @@ function update_auth_token($token_id, $new_token) {
         'si', $new_token, $token_id);
 }
 
-function get_auth_token($selector_hash, $token) {
-    $validator_hash = query(AUTH_TOKEN_DB,
+function get_auth_token($token) {
+    return query(AUTH_TOKEN_DB,
         "SELECT user_id, id, validator_hash FROM vk_task.auth_tokens AS tokens
           WHERE tokens.token = ?",
         's', $token);
-
-    if ($validator_hash && hash_equals($selector_hash, $validator_hash[2])) {
-        //TODO: validator_hash should be also generated
-        //TODO: regenerate token
-        return ['user_id' => $validator_hash[0],
-            'token_id' => $validator_hash[1],];
-    }
-
-    return false;
 }
 
 function generate_token($length = 32) {
