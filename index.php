@@ -1,8 +1,6 @@
 <?php
 require_once 'php/view/view_helper.php';
-require_once 'php/model/session.php';
-
-session_start();
+require_once 'php/controllers/session_controller.php';
 
 session_check();
 

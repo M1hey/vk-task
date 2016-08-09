@@ -9,7 +9,7 @@ function db_init()
     require_once dirname(__DIR__) . '/config/db_config.php';
 
     $database_connections[USERS_DB] = create_connection($users_db);
-    $database_connections[SESSIONS_DB] = $database_connections[USERS_DB];
+    $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB];
     $database_initialized = true;
 }
 

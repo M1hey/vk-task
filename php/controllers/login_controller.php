@@ -2,7 +2,7 @@
 
 function process_login() {
     require_once dirname(__DIR__) . '/view/view_helper.php';
-    require_once dirname(__DIR__) . '/model/session.php';
+    require_once dirname(__DIR__) . '/controllers/session_controller.php';
 
 
 //session_check();
@@ -15,12 +15,15 @@ function process_login() {
         $user = login_user(htmlspecialchars($_POST['login'], ENT_QUOTES), htmlspecialchars($_POST['password'], ENT_QUOTES));
 
         if ($user) {
-            $_SESSION['logged_in'] = true; // TODO set auth cookie
-            $_SESSION['username'] = $user['name'];
-            $_SESSION['balance'] = $user['balance'];
-            $_SESSION['sys_balance'] = "100$";
+            if (create_auth_token_for_user($user['id'], $user['name'])) {
+                $_SESSION['username'] = $user['name'];
+                $_SESSION['balance'] = $user['balance'];
+                $_SESSION['sys_balance'] = "100$";
 
-            include_only_content('user_view.php');
+                include_only_content('user_view.php');
+            } else {
+                echo false;
+            }
         } else {
             echo false;
         }

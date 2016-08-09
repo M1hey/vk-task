@@ -3,55 +3,40 @@
 require_once 'db.php';
 require_once 'user/user.php';
 
-function session_init() {
-    if (!isset($_SESSION['PREV_USERAGENT'])) {
-        $_SESSION['PREV_USERAGENT'] = $_SERVER['HTTP_USER_AGENT'];
-        $_SESSION['PREV_REMOTEADDR'] = $_SERVER['REMOTE_ADDR'];
-    }
+function create_auth_token($user_id, $new_token, $validator_hash) {
+    return query_multiple_params(AUTH_TOKEN_DB,
+        "INSERT INTO vk_task.auth_tokens (user_id, token, validator_hash)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            token = VALUES(token),
+            validator_hash = VALUES(validator_hash)",
+        'iss', $user_id, $new_token, $validator_hash);
 }
 
-function session_check() {
-    session_init();
-
-    if (isset($_GET['logout']) ||
-        $_SERVER['REMOTE_ADDR'] !== $_SESSION['PREV_REMOTEADDR'] ||
-        $_SERVER['HTTP_USER_AGENT'] !== $_SESSION['PREV_USERAGENT']
-    ) {
-        session_unset();
-        session_destroy();
-    }
-
-    session_regenerate_id(); // Generate a new session identifier
-
-    $_SESSION['PREV_USERAGENT'] = $_SERVER['HTTP_USER_AGENT'];
-    $_SESSION['PREV_REMOTEADDR'] = $_SERVER['REMOTE_ADDR'];
+function update_auth_token($token_id, $new_token) {
+    return query_multiple_params(AUTH_TOKEN_DB,
+        "UPDATE vk_task.auth_tokens AS tokens
+            SET tokens.token = ?
+            WHERE tokens.id = ?",
+        'si', $new_token, $token_id);
 }
 
-function get_user_by_auth_token($validator_string, $token) {
-    $user_id = session_check_auth_token($validator_string, $token);
-    if ($user_id) {
-        return get_user_by_id($user_id);
-    }
-
-    session_destroy();
-    return false;
-}
-
-function session_check_auth_token($validator_string, $token) {
-    $validator_hash = query(SESSIONS_DB,
-        "SELECT validator_hash, user_id FROM vk_task.auth_tokens AS tokens
+function get_auth_token($selector_hash, $token) {
+    $validator_hash = query(AUTH_TOKEN_DB,
+        "SELECT user_id, id, validator_hash FROM vk_task.auth_tokens AS tokens
           WHERE tokens.token = ?",
         's', $token);
 
-    if ($validator_hash && hash_equals(hash("sha256", $validator_string), $validator_hash[0])) {
+    if ($validator_hash && hash_equals($selector_hash, $validator_hash[2])) {
         //TODO: validator_hash should be also generated
         //TODO: regenerate token
-        return $validator_hash[1];
+        return ['user_id' => $validator_hash[0],
+            'token_id' => $validator_hash[1],];
     }
 
     return false;
 }
 
-function generateToken($length = 20) {
-    return bin2hex(random_bytes($length));
+function generate_token($length = 32) {
+    return bin2hex(openssl_random_pseudo_bytes($length >> 1)); // bin2hex returns x2 of input length
 }
