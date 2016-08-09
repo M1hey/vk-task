@@ -5,12 +5,6 @@ function process_login() {
     require_once dirname(__DIR__) . '/controllers/session_controller.php';
 
 
-//session_check();
-//
-
-//if ($user_logged_in) {
-//    $user = get_user_by_auth_token($_GET['login'], $_GET['token_from_cookie']);
-//}
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = login_user(htmlspecialchars($_POST['login'], ENT_QUOTES), htmlspecialchars($_POST['password'], ENT_QUOTES));
 

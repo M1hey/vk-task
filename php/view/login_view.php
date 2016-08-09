@@ -14,7 +14,6 @@
         <div class="login-panel">
             <fieldset>
                 <form class="login-form form-narrow form-horizontal" method="post" action="login">
-                    <!--TODO show errors, info-->
                         <div class="alert alert-danger form-group" role="alert">
                             <span class="sr-only">Error:</span>
                             <div id="err_msg"></div>

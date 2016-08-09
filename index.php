@@ -4,9 +4,6 @@ require_once 'php/controllers/session_controller.php';
 
 session_check();
 
-//if ($user_logged_in) {
-//    $user = get_user_by_auth_token($_GET['login'], $_GET['token_from_cookie']);
-//}
 $routes = explode('/', $_SERVER['REQUEST_URI']);
 
 $controller = $routes[1];
