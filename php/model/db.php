@@ -68,11 +68,7 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
             if (!$result_set) return false;
             mysqli_stmt_close($stmt);
 
-            if (count($result_set) == 1) {
-                return $result_set[0];
-            } else {
-                return $result_set;
-            }
+            return $result_set;
         } elseif ($affected_rows) {
             // suppose that everything ok
             return $affected_rows;
@@ -107,11 +103,7 @@ function query($db, $query_statement, $types, $param) {
         if (!$result_set) return false;
         mysqli_stmt_close($stmt);
 
-        if (count($result_set) == 1) {
-            return $result_set[0];
-        } else {
-            return $result_set;
-        }
+        return $result_set;
     }, $query_statement, $param);
 }
 

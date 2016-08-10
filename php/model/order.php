@@ -15,6 +15,7 @@ function complete_order($order_id, &$user) {
         if (!$order) {
             return false;
         }
+        $order = $order[0];
 
         $order_deleted = query_multiple_params(USERS_DB_MASTER,
             "DELETE FROM vk_task.orders

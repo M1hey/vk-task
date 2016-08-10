@@ -1,7 +1,6 @@
 var user_balance = 0;
 
 $(document).ready(function () {
-    var form_selector = $(".worker_order_form");
     $(".worker_order_form").submit(function (event) {
         event.preventDefault();
 
@@ -33,8 +32,8 @@ $(document).ready(function () {
     });
 });
 
-function update_worker_feed(form_selector) {
-    form_selector.remove();
+function update_worker_feed(form) {
+    form.remove();
 }
 
 function show_complete_order_success(msg) {
