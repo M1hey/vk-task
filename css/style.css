@@ -57,3 +57,16 @@ h3 {
 
 .action-button {
 }
+
+/* Form elements */
+.well {
+    padding: 12px !important;
+}
+
+.form-horizontal .form-group, .row {
+     margin-right: 0 !important;
+     margin-left: 0 !important;
+}
+.form-group {
+    margin-bottom: 10px !important;
+}

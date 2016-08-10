@@ -1,29 +1,21 @@
 $(document).ready(function () {
-    $(".login-form").submit(function (event) {
-        event.preventDefault();
-
-        var form = $(this);
-
-        $.ajax({
-            type: form.attr('method'),
-            url: form.attr('action'),
-            data: form.serialize(),
-            success: function (data) {
+    override_form_submit({
+        form_selector: $(".login-form"),
+        success: function (data) {
+            if (data) {
                 if (data) {
                     update_page_content(data);
                 } else {
                     show_login_error("Неправильный логин или пароль");
                 }
-            },
-            error: function (qxXHR, status, error) {
-                msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
-                show_login_error(msg);
-            },
-            beforeSend: function () {
-                // TODO show loading state
+            } else {
+                show_login_error("Неправильный логин или пароль");
             }
-        });
-        return false;
+        },
+        error: function (qxXHR, status, error) {
+            msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
+            show_login_error(msg);
+        }
     });
 });
 

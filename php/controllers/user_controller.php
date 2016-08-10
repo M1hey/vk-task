@@ -9,7 +9,7 @@ function process_user() {
     if ($user) {
         set_user_view_vars($user);
 
-        include_full_page('user_view.php');
+        include_full_page(get_user_view_name_by_type($user['account_type']));
     } else {
         include_full_page('login_view.php');
     }
@@ -26,5 +26,16 @@ function set_user_view_vars($user) {
 
 function show_user_ajax($user) {
     set_user_view_vars($user);
-    include_only_content('user_view.php');
+    include_only_content(get_user_view_name_by_type($user['account_type']));
+}
+
+function get_user_view_name_by_type($type) {
+    switch ($type) {
+        case USER_TYPE_WORKER:
+            return 'user_view.php';
+        case USER_TYPE_EMPLOYER:
+            return 'user_employer_view.php';
+        default:
+            return 'not_found_view.php';
+    }
 }
