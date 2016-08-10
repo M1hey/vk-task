@@ -3,11 +3,12 @@
 define('USERS_DB', 'users_db');
 define('AUTH_TOKEN_DB', 'sessions_db');
 
+require_once 'db_init.php';
+
 function begin_transaction($db) {
     global $database_connections, $database_initialized;
     /* Prepare statement */
     if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        require_once 'db_init.php';
         db_init();
     }
 
@@ -50,7 +51,6 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
 
     /* Prepare statement */
     if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        require_once 'db_init.php';
         db_init();
     }
 
@@ -92,7 +92,6 @@ function query($db, $query_statement, $types, $param) {
     global $database_connections, $database_initialized;
 
     if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        require_once 'db_init.php';
         db_init();
     }
 

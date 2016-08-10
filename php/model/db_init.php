@@ -3,10 +3,11 @@
 $database_connections = [];
 $database_initialized = false;
 
+require_once dirname(__DIR__) . '/config/db_config.php';
+
 function db_init()
 {
     global $users_db, $database_connections, $database_initialized;
-    require_once dirname(__DIR__) . '/config/db_config.php';
 
     $database_connections[USERS_DB] = create_connection($users_db);
     $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB];
