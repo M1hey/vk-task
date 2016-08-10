@@ -4,7 +4,7 @@ require_once 'db.php';
 require_once dirname(__DIR__) . '/config/system_config.php';
 
 function complete_order($order_id, &$user) {
-    execute_in_transaction(USERS_DB, function () use ($order_id, &$user) {
+    return execute_in_transaction(USERS_DB, function () use ($order_id, &$user) {
         global $system_comission_percent;
 
         $order = query_multiple_params(USERS_DB,
@@ -25,7 +25,7 @@ function complete_order($order_id, &$user) {
             return false;
         }
 
-        $system_comission = $order['reward'] * $system_comission_percent / 100;
+        $system_comission = intval($order['reward'] * $system_comission_percent / 100);
 
         $order_created = query_multiple_params(USERS_DB,
             "INSERT INTO vk_task.completed_orders (id, title, amount, comission, employer_id, worker_id) 
@@ -61,7 +61,7 @@ function complete_order($order_id, &$user) {
             return false;
         }
 
-        return true;
+        return $sum_to_worker; // i don't do this in real code
     });
 }
 

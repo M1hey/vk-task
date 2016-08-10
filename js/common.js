@@ -1,4 +1,10 @@
 var user_balance = 0;
+var system_balance = 0;
+
+function update_system_balance(new_balance) {
+    system_balance = new_balance;
+    $("#sys_balance").html(system_balance + '$');
+}
 
 function update_user_balance(new_user_balance) {
     user_balance = new_user_balance;

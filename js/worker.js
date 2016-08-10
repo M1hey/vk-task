@@ -2,27 +2,45 @@ var user_balance = 0;
 
 $(document).ready(function () {
     var form_selector = $(".worker_order_form");
-    override_form_submit({
-        form_selector: form_selector,
-        success: function (data) {
-            console.log(data);
-            if (data) {
-                // todo remove order
-                // show_add_order_form(false);
-                // update_feed_content(data);
-            } else {
-                show_complete_order_error("Ошибка ввода");
+    $(".worker_order_form").submit(function (event) {
+        event.preventDefault();
+
+        var form = $(this);
+
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function (result) {
+                console.log(result);
+                result = JSON.parse(result);
+                if (result['success']) {
+                    // TODO get JSON with all result
+                    update_worker_feed(form);
+                    update_user_balance(user_balance + result['received_amount']);
+                    // TODO update_system_balance();
+                    show_complete_order_success("Вы получили " + result['received_amount'] + "$");
+                } else {
+                    show_complete_order_error("Ошибка ввода");
+                }
+            },
+            error: function (qxXHR, status, error) {
+                msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
+                show_complete_order_error(msg);
             }
-        },
-        error: function (qxXHR, status, error) {
-            msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
-            show_complete_order_error(msg);
-        },
-        validation: function () {
-            return true;
-        }
+        });
+
+        return false;
     });
 });
+
+function update_worker_feed(form_selector) {
+    form_selector.remove();
+}
+
+function show_complete_order_success(msg) {
+    console.log(msg);
+}
 
 function update_feed_content(html) {
     // $('.orders-title').after(html);

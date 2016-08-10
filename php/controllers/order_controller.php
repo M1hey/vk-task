@@ -8,12 +8,21 @@ require_once dirname(__DIR__) . '/model/order.php';
 function process_order_complete($user) {
     $order_id = validate_order_complete_input();
 
-    if($order_id) {
-        complete_order($order_id, $user);
-        // TODO update user id ...
+    $result = ['success' => false];
+    if ($order_id) {
+        $received_amount = complete_order($order_id, $user);
+
+        if ($received_amount) {
+            $result['success'] = true;
+            $result['received_amount'] = $received_amount;
+// TODO        $result['orders'] = updated orders;
+// TODO        $result['system_balance'] = balance;
+        } else {
+            $result['msg'] = "Невозможно выполнить заказ. Обновите страницу";
+        }
     }
 
-    echo false;
+    echo json_encode($result);
 }
 
 function validate_order_complete_input() {
