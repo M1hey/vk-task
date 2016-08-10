@@ -7,5 +7,5 @@
 <div class="order bordered-top">
         <button class="btn btn-link disabled">X</button>
         <?php global $order_title, $order_amount;
-        echo "<span><b>" . $order_title . "</b>:\t" . $order_amount . '$</span>'; ?>
+        echo "<span>" . $order_title . ":\t" . $order_amount . '$</span>'; ?>
 </div>
