@@ -54,7 +54,8 @@
                         <div id="emloyer-order-add-form-wrapper">
                             <button id="close-form-button" class="btn btn-link">x</button>
                             <h2>Информация о заказе</h2>
-                            <form class="add-order-form form-narrow form-horizontal" method="post" action="add_order">
+                            <form class="add-order-form form-narrow form-horizontal" method="post" action="add_order"
+                                  accept-charset="UTF-8">
                                 <div class="alert alert-danger form-group" role="alert">
                                     <span class="sr-only">Error:</span>
                                     <div id="order_err_msg"></div>
@@ -62,10 +63,11 @@
                                 <fieldset>
                                     <div class="form-group">
                                         <input name="title" type="text" class="form-control"
-                                               placeholder="Краткое описание"/>
+                                               placeholder="Краткое описание" value="Вскопать огород"/>
                                     </div>
                                     <div class="form-group">
-                                        <input name="amount" type="text" class="form-control" placeholder="Стоимость"/>
+                                        <input name="amount" type="text" class="form-control" placeholder="Стоимость"
+                                               value="150"/>
                                     </div>
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-default btn-sm btn-block btn-success">

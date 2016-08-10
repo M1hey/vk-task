@@ -3,16 +3,10 @@
 require_once dirname(__DIR__) . '/view/view_helper.php';
 require_once dirname(__DIR__) . '/controllers/session_controller.php';
 
-function process_user() {
-    $user = get_logged_in_user();
+function process_user($user) {
+    set_user_view_vars($user);
 
-    if ($user) {
-        set_user_view_vars($user);
-
-        include_full_page(get_user_view_name_by_type($user['account_type']));
-    } else {
-        include_full_page('login_view.php');
-    }
+    include_full_page(get_user_view_name_by_type($user['account_type']));
 }
 
 

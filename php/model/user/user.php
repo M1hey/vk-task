@@ -26,11 +26,3 @@ function login_user($login, $pwd) {
 
     return false;
 }
-
-function convert_db_row_to_user($res) {
-    return ['id' => $res[0],
-        'name' => $res[2],
-        'type' => $res[4],
-        'balance' => $res[5]
-    ];
-}

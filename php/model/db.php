@@ -3,6 +3,36 @@
 define('USERS_DB', 'users_db');
 define('AUTH_TOKEN_DB', 'sessions_db');
 
+function begin_transaction($db) {
+    global $database_connections, $database_initialized;
+    /* Prepare statement */
+    if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
+        require_once 'db_init.php';
+        db_init();
+    }
+
+    $link = $database_connections[$db];
+    $result = mysqli_autocommit($link, false);
+    $result = $result && mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
+    if (!$result) {
+        error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
+    }
+    return $result;
+}
+
+function rollback_transaction($db) {
+    global $database_connections;
+    $result = mysqli_rollback($database_connections[$db]);
+    if (!$result) {
+        error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
+    }
+}
+
+function end_transaction($db) {
+    global $database_connections;
+    mysqli_commit($database_connections[$db]);
+}
+
 function query_multiple_params($db, $query_statement, $types, ... $params) {
     global $database_connections, $database_initialized;
 
@@ -41,6 +71,7 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
         $result = mysqli_stmt_get_result($stmt);
         $affected_rows = mysqli_stmt_affected_rows($stmt);
         if ($result) {
+            //TODO where to place mysqli_free_result
             $result_set = mysqli_fetch_array($result, MYSQLI_ASSOC);
             if (!$result_set) return false;
             mysqli_stmt_close($stmt);

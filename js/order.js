@@ -2,6 +2,7 @@ var user_balance = 0;
 
 function update_user_balance(new_user_balance) {
     user_balance = new_user_balance;
+    $("#acc_balance").html(user_balance);
 }
 
 $(document).ready(function () {
@@ -18,7 +19,9 @@ $(document).ready(function () {
         success: function (data) {
             console.log(data);
             if (data) {
-                update_page_content(data);
+                show_add_order_form(false);
+                update_feed_content(data);
+                // todo update balance
             } else {
                 show_order_error("Ошибка ввода");
             }
@@ -29,12 +32,12 @@ $(document).ready(function () {
         },
         validation: function () {
             var title = form_selector.find('input[name="title"]').val();
-            if(title === '') {
+            if (title === '') {
                 show_order_error("Введите наименование");
                 return false;
             }
             var amount = form_selector.find('input[name="amount"]').val();
-            if(amount === '') {
+            if (amount === '') {
                 show_order_error("Введите стоимость");
                 return false;
             }
@@ -51,6 +54,11 @@ $(document).ready(function () {
         }
     });
 });
+
+function update_feed_content(html) {
+    $('#emloyer-orders').first().insertBefore(html);
+}
+
 
 function show_add_order_form(show_form) {
     $("#emloyer-order-add-form-wrapper").toggle(show_form);
