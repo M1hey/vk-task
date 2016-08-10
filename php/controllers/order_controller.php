@@ -12,6 +12,9 @@ function process_add_order($user) {
 
         if (create_order($user['id'], $user['username'], $title, $amount)) {
             global $order_title, $order_amount, $acc_balance;
+            $order_title = $title;
+            $order_amount = $amount;
+            $acc_balance = $user['balance'] - $amount;
 
             // return new order and balance
             include_only_content('order_view.php');

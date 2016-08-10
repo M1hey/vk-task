@@ -56,7 +56,8 @@ $(document).ready(function () {
 });
 
 function update_feed_content(html) {
-    $('#emloyer-orders').first().insertBefore(html);
+    $('.orders-title').after(html);
+    $('.orders-title').text("Ваши заказы:");
 }
 
 

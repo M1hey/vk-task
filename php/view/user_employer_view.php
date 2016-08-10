@@ -1,6 +1,6 @@
 <head>
     <link href="/css/employer.css" rel="stylesheet" media="screen"/>
-    <script src="/js/order.js" type="text/javascript"></script>
+    <script src="/js/employer.js" type="text/javascript"></script>
 </head>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -52,7 +52,7 @@
                             global $orders;
                             if (count($orders)) {
                                 global $order_amount, $order_title;
-                                echo "<h2>Ваши заказы:</h2>";
+                                echo "<h2 class=\"orders-title\">Ваши заказы:</h2>";
 
                                 foreach ($orders as $order) {
                                     $order_title = $order['title'];
@@ -61,7 +61,7 @@
                                     include 'order_view.php';
                                 }
                             } else {
-                                echo "<h2>У вас пока нет размещённых заказов</h2>";
+                                echo "<h2 class=\"orders-title\">У вас пока нет размещённых заказов</h2>";
                             }
                             ?>
                         </div>
