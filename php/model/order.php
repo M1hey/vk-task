@@ -4,10 +4,10 @@ require_once 'db.php';
 require_once dirname(__DIR__) . '/config/system_config.php';
 
 function complete_order($order_id, &$user) {
-    return execute_in_transaction(USERS_DB, function () use ($order_id, &$user) {
+    return execute_in_transaction(USERS_DB_MASTER, function () use ($order_id, &$user) {
         global $system_comission_percent;
 
-        $order = query_multiple_params(USERS_DB,
+        $order = query_multiple_params(USERS_DB_MASTER,
             "SELECT id, title, reward, employer_id FROM vk_task.orders
                 WHERE id = ?",
             'i', $order_id);
@@ -16,7 +16,7 @@ function complete_order($order_id, &$user) {
             return false;
         }
 
-        $order_deleted = query_multiple_params(USERS_DB,
+        $order_deleted = query_multiple_params(USERS_DB_MASTER,
             "DELETE FROM vk_task.orders
               WHERE id = ?",
             'i', $order_id);
@@ -27,7 +27,7 @@ function complete_order($order_id, &$user) {
 
         $system_comission = intval($order['reward'] * $system_comission_percent / 100);
 
-        $order_created = query_multiple_params(USERS_DB,
+        $order_created = query_multiple_params(USERS_DB_MASTER,
             "INSERT INTO vk_task.completed_orders (id, title, amount, comission, employer_id, worker_id) 
               VALUES (?,?,?,?,?,?)",
             'isiiii', $order_id, $order['title'], $order['reward'], $system_comission, $order['employer_id'], $user['id']);
@@ -40,7 +40,7 @@ function complete_order($order_id, &$user) {
         $sum_to_worker = $order['reward'] - $system_comission;
 
         // add money to account
-        $money_added = query_multiple_params(USERS_DB,
+        $money_added = query_multiple_params(USERS_DB_MASTER,
             "UPDATE vk_task.users AS vk_user
                 SET vk_user.balance = vk_user.balance + ?
                 WHERE vk_user.id = ?",
@@ -54,7 +54,7 @@ function complete_order($order_id, &$user) {
         $user['balance'] += $sum_to_worker; // usually i don't do it
 
         // add comission to system
-        $system_operation_completed = query_multiple_params(USERS_DB,
+        $system_operation_completed = query_multiple_params(USERS_DB_MASTER,
             "INSERT INTO system_history(timestamp, amount) VALUES (?,?)", 'ii', time(), $system_comission);
 
         if (!$system_operation_completed) {
@@ -67,8 +67,8 @@ function complete_order($order_id, &$user) {
 
 function create_order($employer_id, $employer_name, $title, $amount) {
     // TODO!!!! how would we process a transaction via multiple dbs?
-    execute_in_transaction(USERS_DB, function () use ($employer_id, $employer_name, $title, $amount) {
-        $money_withdrawed = query_multiple_params(USERS_DB,
+    return execute_in_transaction(USERS_DB_MASTER, function () use ($employer_id, $employer_name, $title, $amount) {
+        $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
             "UPDATE vk_task.users AS vk_user
             SET vk_user.balance = vk_user.balance - ?
             WHERE vk_user.id = ? AND vk_user.balance >= ?",
@@ -78,7 +78,7 @@ function create_order($employer_id, $employer_name, $title, $amount) {
             return false;
         }
 
-        $order_created = query_multiple_params(USERS_DB,
+        $order_created = query_multiple_params(USERS_DB_MASTER,
             "INSERT INTO vk_task.orders (title, reward, employer_id, employer_name) 
             VALUES (?,?,?,?)",
             'siis', $title, $amount, $employer_id, $employer_name);
@@ -89,13 +89,13 @@ function create_order($employer_id, $employer_name, $title, $amount) {
 
 function get_orders() {
     // todo limit, pagination
-    return query(USERS_DB,
+    return query(USERS_DB_SLAVE,
         "SELECT id, title, reward, employer_name FROM vk_task.orders LIMIT 15",
         '', null);
 }
 
 function get_orders_by_emp_id($employer_id) {
-    return query(USERS_DB,
+    return query(USERS_DB_SLAVE,
         "SELECT id, title, reward FROM vk_task.orders WHERE employer_id = ?",
         'i', $employer_id);
 }

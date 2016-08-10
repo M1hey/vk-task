@@ -15,7 +15,6 @@ $(document).ready(function () {
                 console.log(result);
                 result = JSON.parse(result);
                 if (result['success']) {
-                    // TODO get JSON with all result
                     update_worker_feed(form);
                     update_user_balance(user_balance + result['received_amount']);
                     // TODO update_system_balance();

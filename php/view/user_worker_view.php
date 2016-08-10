@@ -50,7 +50,7 @@
                         <div id="emloyer-orders">
                             <?php
                             global $orders;
-                            if (count($orders)) {
+                            if ($orders && count($orders)) {
                                 global $order_id, $order_amount, $order_title;
                                 echo "<h2 class=\"orders-title\">Доступные заказы:</h2>";
 
