@@ -2,7 +2,7 @@ var user_balance = 0;
 
 function update_user_balance(new_user_balance) {
     user_balance = new_user_balance;
-    $("#acc_balance").html(user_balance);
+    $("#acc_balance").html(user_balance + '$');
 }
 
 $(document).ready(function () {
@@ -73,6 +73,6 @@ function hide_order_error() {
 }
 
 function show_order_error(msg) {
-    $("#emloyer-order-add-form-wrapper").find("form").find(".alert").css('display', 'block', 'important');
+    $("#emloyer-order-add-form-wrapper").find("form").find(".alert").css('display', 'block');
     $("#order_err_msg").html(msg);
 }

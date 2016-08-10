@@ -1,6 +1,6 @@
 <?php
 require_once 'php/view/view_helper.php';
-require_once 'php/controllers/session_controller.php';
+require_once 'php/services/session_service.php';
 
 require_once 'php/controllers/login_controller.php';
 require_once 'php/controllers/user_controller.php';

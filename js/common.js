@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $("#add_err").css('display', 'none', 'important');
+    $("#add_err").css('display', 'none');
 });
 
 function update_page_content(html) {

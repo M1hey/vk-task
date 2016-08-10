@@ -1,0 +1,24 @@
+#account-info, #emloyer-order-add-form-wrapper {
+    /*margin-top: 72px;*/
+}
+
+.alert, #emloyer-order-add-form-wrapper {
+    display: none;
+}
+
+#close-form-button {
+    float: right;
+    margin-top: -24px;
+    margin-right: -10px;
+}
+
+.order .panel-heading span {
+    margin-left: 12px;
+    font-size: 18px;
+}
+
+.order .panel-heading button {
+    color: #fff;
+    float: right;
+    margin-top: -7px;
+}

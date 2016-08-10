@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__DIR__) . '/view/view_helper.php';
-require_once dirname(__DIR__) . '/controllers/session_controller.php';
+require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/model/order.php';
 
 function process_add_order($user) {
@@ -14,7 +14,7 @@ function process_add_order($user) {
             global $order_title, $order_amount, $acc_balance;
 
             // return new order and balance
-            include_only_content('order_created_view.php');
+            include_only_content('order_view.php');
         } else {
             echo false;
         }

@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__DIR__) . '/view/view_helper.php';
-require_once dirname(__DIR__) . '/controllers/session_controller.php';
+require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/controllers/user_controller.php';
 
 function process_login() {

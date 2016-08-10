@@ -25,7 +25,7 @@
                         <input name="password" type="password" class="form-control" placeholder="Пароль"/>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-default btn-primary btn-sm btn-block">Войти</button>
+                        <button type="submit" class="btn btn-link btn-block">Войти</button>
                     </div>
                 </fieldset>
             </form>

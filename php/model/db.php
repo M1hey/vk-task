@@ -81,7 +81,7 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
             } else {
                 return $result_set;
             }
-        } else if ($affected_rows) {
+        } elseif ($affected_rows) {
             // suppose that everything ok
             return $affected_rows;
         } else {

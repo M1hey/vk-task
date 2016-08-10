@@ -19,6 +19,6 @@ $(document).ready(function () {
 });
 
 function show_login_error(msg) {
-    $(".alert").css('display', 'block', 'important');
+    $(".alert").css('display', 'block');
     $("#err_msg").html(msg);
 }
