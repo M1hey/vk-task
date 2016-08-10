@@ -4,8 +4,34 @@ require_once dirname(__DIR__) . '/view/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/model/order.php';
 
+// todo refactor: it's more than controller now
+function process_order_complete($user) {
+    $order_id = validate_order_complete_input();
+
+    if($order_id) {
+        complete_order($order_id, $user);
+        // TODO update user id ...
+    }
+
+    echo false;
+}
+
+function validate_order_complete_input() {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['order_id'])) {
+        $order_id = intval(htmlspecialchars($_POST['order_id'], ENT_QUOTES));
+
+        if (!$order_id || $order_id <= 0) {
+//            show_order_error("Стоимость заказа заказа должна быть числом больше 0");
+            return false;
+        }
+
+        return $order_id;
+    }
+    return false;
+}
+
 function process_add_order($user) {
-    $input = validate_input($user['balance']);
+    $input = validate_add_order_input($user['balance']);
     if ($input) {
         $title = $input['title'];
         $amount = $input['amount'];
@@ -27,7 +53,7 @@ function process_add_order($user) {
     }
 }
 
-function validate_input($user_balance) {
+function validate_add_order_input($user_balance) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['title']) || !isset($_POST['amount'])) {
         $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
         if (empty($title)) {

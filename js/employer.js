@@ -1,10 +1,3 @@
-var user_balance = 0;
-
-function update_user_balance(new_user_balance) {
-    user_balance = new_user_balance;
-    $("#acc_balance").html(user_balance + '$');
-}
-
 $(document).ready(function () {
     $("#create-order-button").click(function (event) {
         show_add_order_form(true);

@@ -11,6 +11,10 @@
     font-size: 18px;
 }
 
+.order-description {
+    text-indent: -0.9em;
+}
+
 .order button {
     margin-top: -5px;
 }

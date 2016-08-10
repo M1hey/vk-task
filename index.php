@@ -24,6 +24,8 @@ if ($controller_path == 'login' || isset($_GET['logout'])) {
             process_user($user);
         } elseif ($controller_path == 'add_order') {
             process_add_order($user);
+        } elseif ($controller_path == 'complete_order') {
+            process_order_complete($user);
         } else {
             include_full_page('not_found_view.php');
         }

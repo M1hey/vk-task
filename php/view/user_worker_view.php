@@ -51,12 +51,13 @@
                             <?php
                             global $orders;
                             if (count($orders)) {
-                                global $order_amount, $order_title;
+                                global $order_id, $order_amount, $order_title;
                                 echo "<h2 class=\"orders-title\">Доступные заказы:</h2>";
 
                                 foreach ($orders as $order) {
                                     $order_title = $order['title'];
                                     $order_amount = $order['reward'];
+                                    $order_id = $order['id'];
 
                                     include 'worker_order_view.php';
                                 }

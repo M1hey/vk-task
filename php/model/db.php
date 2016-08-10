@@ -5,33 +5,24 @@ define('AUTH_TOKEN_DB', 'sessions_db');
 
 require_once 'db_init.php';
 
-function begin_transaction($db) {
-    global $database_connections, $database_initialized;
-    /* Prepare statement */
-    if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        db_init();
-    }
-
+function execute_in_transaction($db, $query_func) {
+    global $database_connections;
     $link = $database_connections[$db];
-    $result = mysqli_autocommit($link, false);
-    $result = $result && mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
-    if (!$result) {
-        error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
-    }
-    return $result;
-}
 
-function rollback_transaction($db) {
-    global $database_connections;
-    $result = mysqli_rollback($database_connections[$db]);
-    if (!$result) {
-        error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
-    }
-}
+    if (begin_transaction($db)) {
+        $result = $query_func();
 
-function end_transaction($db) {
-    global $database_connections;
-    mysqli_commit($database_connections[$db]);
+        if ($result) {
+            end_transaction($db);
+        } else {
+            error_log("Transaction failed: [" . mysqli_errno($link) . "] " . mysqli_error($link));
+            rollback_transaction($db);
+        }
+
+        return $result;
+    } else {
+        return false;
+    }
 }
 
 function query_multiple_params($db, $query_statement, $types, ... $params) {
@@ -142,4 +133,35 @@ function get_var_dump($params) {
     $contents = ob_get_contents();
     ob_end_clean();
     return $contents;
+}
+
+// kind of private
+
+function begin_transaction($db) {
+    global $database_connections, $database_initialized;
+    /* Prepare statement */
+    if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
+        db_init();
+    }
+
+    $link = $database_connections[$db];
+    $result = mysqli_autocommit($link, false);
+    $result = $result && mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
+    if (!$result) {
+        error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
+    }
+    return $result;
+}
+
+function rollback_transaction($db) {
+    global $database_connections;
+    $result = mysqli_rollback($database_connections[$db]);
+    if (!$result) {
+        error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
+    }
+}
+
+function end_transaction($db) {
+    global $database_connections;
+    mysqli_commit($database_connections[$db]);
 }
