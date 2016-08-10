@@ -48,6 +48,6 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_login_uindex` (`login`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO vk_task.users (login, username, password_hash, account_type, balance)
+INSERT INTO users (login, username, password_hash, account_type, balance)
 VALUES ('worker','Исполнитель Вася', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 1, 0),
   ('employer','Заказчик Петя', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 2, 0);
