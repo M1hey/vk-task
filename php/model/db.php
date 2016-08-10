@@ -105,7 +105,9 @@ function query($db, $query_statement, $types, $param) {
 
     return handleQuery($link, function () use ($stmt, $types, $param) {
         if (!$stmt) return false;
-        if (!mysqli_stmt_bind_param($stmt, $types, $param)) return false;
+        if ($param) {
+            if (!mysqli_stmt_bind_param($stmt, $types, $param)) return false;
+        }
         if (!mysqli_stmt_execute($stmt)) return false;
         $result = mysqli_stmt_get_result($stmt);
         if (!$result) return false;

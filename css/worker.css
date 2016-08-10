@@ -1,0 +1,16 @@
+.alert {
+    display: none;
+}
+
+.order {
+    margin-bottom: 12px;
+}
+
+.order span {
+    margin-left: 12px;
+    font-size: 18px;
+}
+
+.order button {
+    margin-top: -5px;
+}

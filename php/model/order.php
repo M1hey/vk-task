@@ -27,9 +27,15 @@ function create_order($employer_id, $employer_name, $title, $amount) {
     return false;
 }
 
+function get_orders() {
+    // todo limit, pagination
+    return query(USERS_DB,
+        "SELECT id, title, reward, employer_name FROM vk_task.orders LIMIT 15",
+        '', null);
+}
 
 function get_orders_by_emp_id($employer_id) {
     return query(USERS_DB,
-        "SELECT title, reward FROM vk_task.orders WHERE employer_id = ?",
+        "SELECT id, title, reward FROM vk_task.orders WHERE employer_id = ?",
         'i', $employer_id);
 }
