@@ -5,6 +5,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         change_page_url('Страница пользователя', '/user');
+        update_user_balance(<?php global $acc_balance; echo $acc_balance; ?>);
     });
 </script>
 <div class="container">
@@ -43,7 +44,7 @@
                 </div>
             </div>
             <div class="col-md-5">
-                <div class="content col-offset-md-1 col-md-10">
+                <div class="content col-offset-md-1 col-md-11">
                     <div class="box">
                         <div id="emloyer-orders">
                             <h2>
@@ -56,7 +57,7 @@
                             <form class="add-order-form form-narrow form-horizontal" method="post" action="add_order">
                                 <div class="alert alert-danger form-group" role="alert">
                                     <span class="sr-only">Error:</span>
-                                    <div id="err_msg"></div>
+                                    <div id="order_err_msg"></div>
                                 </div>
                                 <fieldset>
                                     <div class="form-group">

@@ -16,14 +16,17 @@ function override_form_submit(options) {
 
         var form = $(this);
 
-        $.ajax({
-            type: form.attr('method'),
-            url: form.attr('action'),
-            data: form.serialize(),
-            success: options['success'],
-            error: options['error'],
-            beforeSend: options['before_send']
-        });
+        if (options['validation']()) {
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: options['success'],
+                error: options['error'],
+                beforeSend: options['before_send']
+            })
+        }
+
         return false;
     });
 }

@@ -3,11 +3,7 @@ $(document).ready(function () {
         form_selector: $(".login-form"),
         success: function (data) {
             if (data) {
-                if (data) {
-                    update_page_content(data);
-                } else {
-                    show_login_error("Неправильный логин или пароль");
-                }
+                update_page_content(data);
             } else {
                 show_login_error("Неправильный логин или пароль");
             }
@@ -15,6 +11,9 @@ $(document).ready(function () {
         error: function (qxXHR, status, error) {
             msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
             show_login_error(msg);
+        },
+        validation: function () {
+            return true;
         }
     });
 });
