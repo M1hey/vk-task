@@ -5,17 +5,16 @@ $database_initialized = false;
 
 require_once dirname(__DIR__) . '/config/db_config.php';
 
-function db_init()
-{
+function db_init() {
     global $users_db, $database_connections, $database_initialized;
 
-    $database_connections[USERS_DB] = create_connection($users_db);
-    $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB];
+    $database_connections[USERS_DB_SLAVE] = create_connection($users_db);
+    $database_connections[USERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
+    $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB_SLAVE];
     $database_initialized = true;
 }
 
-function create_connection($db_opts)
-{
+function create_connection($db_opts) {
     $connection = mysqli_connect($db_opts[DB_HOST], $db_opts[DB_USER], $db_opts[DB_PASSWORD], $db_opts[DB_DATABASE]);
     mysqli_set_charset($connection, "utf8");
 

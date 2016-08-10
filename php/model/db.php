@@ -1,6 +1,7 @@
 <?php
 
-define('USERS_DB', 'users_db');
+define('USERS_DB_SLAVE', 'users_db');
+define('USERS_DB_MASTER', 'users_db');
 define('AUTH_TOKEN_DB', 'sessions_db');
 
 require_once 'db_init.php';
