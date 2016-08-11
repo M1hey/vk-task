@@ -3,67 +3,48 @@
 require_once 'db.php';
 require_once dirname(__DIR__) . '/config/system_config.php';
 
-function complete_order($order_id, &$user) {
-    return execute_in_transaction(USERS_DB_MASTER, function () use ($order_id, &$user) {
-        global $system_comission_percent;
+function complete_order($order_id, $order_amount, &$user) {
+    global $system_comission_percent;
+    $system_comission = intval($order_amount * $system_comission_percent / 100);
 
-        $order = query_multiple_params(USERS_DB_MASTER,
-            "SELECT id, title, reward, employer_id FROM orders
-                WHERE id = ?",
-            'i', $order_id);
+    $order_reserved = query_multiple_params(USERS_DB_MASTER,
+        "UPDATE orders
+            SET worker_id = ?, status = 'reserved', comission = ? 
+            WHERE id = ? AND status = 'created' AND orders.reward = ?",
+        'ii', $user['id'], $system_comission, $order_id, $order_amount);
 
-        if (!$order) {
-            return false;
-        }
-        $order = $order[0];
+    if (!$order_reserved) {
+        return false;
+    }
 
-        $order_deleted = query_multiple_params(USERS_DB_MASTER,
-            "DELETE FROM orders
-              WHERE id = ?",
-            'i', $order_id);
+    // add money to account
+    $money_added_to_user = query_multiple_params(USERS_DB_MASTER,
+        "UPDATE users, orders 
+                SET 
+                  users.balance = users.balance + orders.reward - orders.comission, 
+                  orders.status = 'user_have_money'
+                WHERE users.id = ? 
+                AND orders.status = 'reserved' AND orders.id = ?",
+        'ii', $user['id'], $order_id);
 
-        if (!$order_deleted) {
-            return false;
-        }
+    if (!$money_added_to_user) {
+        return false;
+    }
 
-        $system_comission = intval($order['reward'] * $system_comission_percent / 100);
+    // add comission to system
+    $system_operation_completed = query_multiple_params(USERS_DB_MASTER,
+        "UPDATE system_account, orders 
+                SET 
+                  system_account.balance = system_account.balance + orders.comission,
+                  orders.status = 'completed'
+                WHERE orders.id = ? AND orders.status = 'user_have_money'
+                  AND system_account.id = 0", 'i', $order_id);
 
-        $order_created = query_multiple_params(USERS_DB_MASTER,
-            "INSERT INTO completed_orders (id, title, amount, comission, employer_id, worker_id) 
-              VALUES (?,?,?,?,?,?)",
-            'isiiii', $order_id, $order['title'], $order['reward'], $system_comission, $order['employer_id'], $user['id']);
+    if (!$system_operation_completed) {
+        return false;
+    }
 
-        if (!$order_created) {
-            return false;
-        }
-
-        // TODO really it should be named reward, and oredr['reward'] -> amount
-        $sum_to_worker = $order['reward'] - $system_comission;
-
-        // add money to account
-        $money_added = query_multiple_params(USERS_DB_MASTER,
-            "UPDATE users AS vk_user
-                SET vk_user.balance = vk_user.balance + ?
-                WHERE vk_user.id = ?",
-            'ii', $sum_to_worker, $user['id']);
-
-
-        if (!$money_added) {
-            return false;
-        }
-
-        $user['balance'] += $sum_to_worker; // usually i don't do it
-
-        // add comission to system
-        $system_operation_completed = query_multiple_params(USERS_DB_MASTER,
-            "INSERT INTO system_history(timestamp, amount) VALUES (?,?)", 'ii', time(), $system_comission);
-
-        if (!$system_operation_completed) {
-            return false;
-        }
-
-        return $sum_to_worker; // i don't do this in real code
-    });
+    return $order_amount - $system_comission;
 }
 
 function create_order($employer_id, $employer_name, $title, $amount) {
