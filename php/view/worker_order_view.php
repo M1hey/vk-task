@@ -12,7 +12,7 @@
             <div class="col-md-4">
                 <button type="submit" class="btn btn-link pull-right">Выполнить</button>
                 <input name="order_id" type="hidden" value="<?php global $order_id;
-                echo $order_id ?>"
+                echo $order_id ?>"/>
             </div>
         </div>
     </div>
