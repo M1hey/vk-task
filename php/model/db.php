@@ -70,8 +70,12 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
 
             return $result_set;
         } elseif ($affected_rows) {
-            // suppose that everything ok
-            return $affected_rows;
+            $insert_id = mysqli_stmt_insert_id($stmt);
+            if ($insert_id) {
+                return $insert_id;
+            } else {
+                return $affected_rows;
+            }
         } else {
             return false;
         }

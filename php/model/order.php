@@ -48,25 +48,43 @@ function complete_order($order_id, $order_amount, &$user) {
 }
 
 function create_order($employer_id, $employer_name, $title, $amount) {
+    global $system_comission_percent;
+
     // TODO!!!! how would we process a transaction via multiple dbs?
-    return execute_in_transaction(USERS_DB_MASTER, function () use ($employer_id, $employer_name, $title, $amount) {
-        $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
-            "UPDATE users AS vk_user
-            SET vk_user.balance = vk_user.balance - ?
-            WHERE vk_user.id = ? AND vk_user.balance >= ?",
-            'iii', $amount, $employer_id, $amount);
+    $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
+        "UPDATE users
+            SET balance = balance - ?,
+            reserved_amount = ?
+            WHERE id = ? AND balance >= ?",
+        'iiii', $amount, $amount, $employer_id, $amount);
 
-        if (!$money_withdrawed) {
-            return false;
-        }
+    if (!$money_withdrawed) {
+        return false;
+    }
 
-        $order_created = query_multiple_params(USERS_DB_MASTER,
-            "INSERT INTO orders (title, reward, employer_id, employer_name) 
-            VALUES (?,?,?,?)",
-            'siis', $title, $amount, $employer_id, $employer_name);
+    $system_comission = intval($amount * $system_comission_percent / 100);
 
-        return $order_created;
-    });
+    $order_id = query_multiple_params(USERS_DB_MASTER,
+        "INSERT INTO orders (title, reward, employer_id, employer_name, comission) 
+            VALUES (?,?,?,?,?)",
+        'siisi', $title, $amount, $employer_id, $employer_name, $system_comission);
+
+    if (!$order_id) {
+        return false;
+    }
+
+    $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
+        "UPDATE users, orders
+            SET 
+              users.reserved_amount = users.reserved_amount - orders.reward,
+              orders.status = 'paid' 
+            WHERE users.id = ? 
+              AND users.reserved_amount >= orders.reward
+              AND orders.id = ?
+              AND orders.status = 'created'",
+        'ii', $employer_id, $order_id);
+
+    return $money_withdrawed;
 }
 
 function get_orders() {
