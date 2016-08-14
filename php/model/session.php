@@ -22,15 +22,10 @@ function update_auth_token($token_id, $new_token) {
 }
 
 function get_auth_token($token) {
-    $query = query(AUTH_TOKEN_DB,
+    return single_result(query(AUTH_TOKEN_DB,
         "SELECT user_id, id, validator_hash FROM auth_tokens AS tokens
           WHERE tokens.token = ?",
-        's', $token);
-    if ($query) {
-        return $query[0];
-    } else {
-        return false;
-    }
+        's', $token));
 }
 
 function generate_token($length = 32) {

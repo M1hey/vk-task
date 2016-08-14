@@ -9,7 +9,7 @@ require_once dirname(__DIR__) . '/model/system.php';
 function process_order_complete($user) {
     $order_id = validate_order_complete_input();
 
-    $result = ['success' => false];
+    $result = [];
     if ($order_id) {
         $order_completed = complete_order($order_id, $user['id']);
 
@@ -33,8 +33,12 @@ function process_order_complete($user) {
             // get new orders
             $result['msg'] = "Невозможно выполнить заказ. Его уже кто-то выполнил.";
         }
+    } else {
+        $result['success'] = false;
+        $result['msg'] = "Неверный номер заказа";
     }
 
+    header('Content-Type: application/json');
     echo json_encode($result);
 }
 

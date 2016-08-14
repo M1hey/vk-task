@@ -7,9 +7,9 @@ require_once 'php/controllers/user_controller.php';
 require_once 'php/controllers/order_controller.php';
 
 session_check();
+set_headers();
 
 $routes = explode('/', $_SERVER['REQUEST_URI']);
-header('accept-charset="UTF-8"');
 
 $controller_path = $routes[1];
 if ($controller_path == 'login' || isset($_GET['logout'])) {

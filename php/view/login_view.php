@@ -19,13 +19,16 @@
                 </div>
                 <fieldset>
                     <div class="form-group">
-                        <input name="login" type="text" class="form-control" placeholder="Логин"/>
+                        <input name="login" type="text" class="form-control" autocomplete="off" placeholder="Логин"/>
                     </div>
                     <div class="form-group">
-                        <input name="password" type="password" class="form-control" placeholder="Пароль"/>
+                        <input name="password" type="password" class="form-control" autocomplete="off"
+                               placeholder="Пароль"/>
                     </div>
                     <div class="form-group">
-                        <button id="login_button" type="submit" class="btn btn-link btn-block" data-loading-text="Загрузка">Войти</button>
+                        <button id="login_button" type="submit" class="btn btn-link btn-block"
+                                data-loading-text="Загрузка">Войти
+                        </button>
                     </div>
                 </fieldset>
             </form>

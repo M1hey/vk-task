@@ -1,10 +1,13 @@
 <?php
 
 require_once dirname(__DIR__) . '/model/session.php';
+require_once dirname(__DIR__) . '/services/security_service.php';
 
 /*prevent session fixation*/
 function session_check() {
     session_start();
+
+    set_session_params();
 
     if (isset($_GET['logout']) ||
         (isset($_SESSION['PREV_REMOTEADDR']) && $_SERVER['REMOTE_ADDR'] !== $_SESSION['PREV_REMOTEADDR']) ||
@@ -13,7 +16,7 @@ function session_check() {
         session_clear();
     }
 
-    session_regenerate_id(); // Generate a new session identifier
+    session_regenerate_id(true); // Generate a new session identifier
 
     $_SESSION['PREV_USERAGENT'] = $_SERVER['HTTP_USER_AGENT'];
     $_SESSION['PREV_REMOTEADDR'] = $_SERVER['REMOTE_ADDR'];
@@ -33,8 +36,8 @@ function create_auth_token_for_user($user_id, $username) {
 
 function get_logged_in_user() {
     if (isset($_SESSION['auth_token'])) {
-        $auth_token = $_SESSION['auth_token'];
-        $selector_string = $_SESSION['username'];
+        $auth_token = htmlspecialchars($_SESSION['auth_token'], ENT_QUOTES);
+        $selector_string = htmlspecialchars($_SESSION['username'], ENT_QUOTES);
 
         $auth_token = get_auth_token($auth_token);
         if ($auth_token) {
@@ -49,7 +52,6 @@ function get_logged_in_user() {
                 }
 
                 $user = get_user_by_id($auth_token['user_id']);
-                // todo atomicy check
                 $_SESSION['auth_token'] = $new_token;
                 return $user;
             } else {
