@@ -3,58 +3,64 @@
 require_once 'db.php';
 require_once dirname(__DIR__) . '/config/system_config.php';
 
-function complete_order($order_id, $order_amount, &$user) {
-    global $system_comission_percent;
-    $system_comission = intval($order_amount * $system_comission_percent / 100);
-
+function complete_order($order_id, $user_id) {
     $order_reserved = query_multiple_params(USERS_DB_MASTER,
         "UPDATE orders
-            SET worker_id = ?, status = 'reserved', comission = ? 
-            WHERE id = ? AND status = 'created' AND orders.reward = ?",
-        'ii', $user['id'], $system_comission, $order_id, $order_amount);
+            SET worker_id = ?, status = 'reserved' 
+            WHERE id = ? AND status = 'paid'",
+        'ii', $user_id, $order_id);
 
     if (!$order_reserved) {
+        // TODO return new orders list
         return false;
     }
 
+    // order is no more accessible to other users
     // add money to account
-    $money_added_to_user = query_multiple_params(USERS_DB_MASTER,
+    $reward_credited = query_multiple_params(USERS_DB_MASTER,
         "UPDATE users, orders 
                 SET 
-                  users.balance = users.balance + orders.reward - orders.comission, 
-                  orders.status = 'user_have_money'
+                  users.balance = users.balance + COALESCE(orders.reward, 0) - COALESCE(orders.comission, 0), 
+                  orders.status = 'reward_credited'
                 WHERE users.id = ? 
-                AND orders.status = 'reserved' AND orders.id = ?",
-        'ii', $user['id'], $order_id);
+                  AND orders.id = ? 
+                  AND orders.status = 'reserved'",
+        'ii', $user_id, $order_id);
 
-    if (!$money_added_to_user) {
+    if (!$reward_credited) {
         return false;
     }
 
     // add comission to system
-    $system_operation_completed = query_multiple_params(USERS_DB_MASTER,
+    $order_completed = query_multiple_params(USERS_DB_MASTER,
         "UPDATE system_account, orders 
                 SET 
                   system_account.balance = system_account.balance + orders.comission,
                   orders.status = 'completed'
-                WHERE orders.id = ? AND orders.status = 'user_have_money'
-                  AND system_account.id = 0", 'i', $order_id);
+                WHERE orders.id = ? 
+                  AND orders.status = 'reward_credited'
+                  AND system_account.id = 1", 'i', $order_id);
 
-    if (!$system_operation_completed) {
+    if (!$order_completed) {
         return false;
     }
 
-    return $order_amount - $system_comission;
+    return $order_completed;
 }
 
 function create_order($employer_id, $employer_name, $title, $amount) {
-    global $system_comission_percent;
+    $system_commission_percent = query(USERS_DB_SLAVE, "SELECT commission_percent FROM system_account");
 
-    // TODO!!!! how would we process a transaction via multiple dbs?
+    if (!$system_commission_percent) {
+        return false;
+    }
+    $system_commission_percent = $system_commission_percent['commission_percent'];
+
     $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
         "UPDATE users
-            SET balance = balance - ?,
-            reserved_amount = ?
+            SET
+              balance = balance - ?,
+              reserved_amount = reserved_amount + ?
             WHERE id = ? AND balance >= ?",
         'iiii', $amount, $amount, $employer_id, $amount);
 
@@ -62,7 +68,7 @@ function create_order($employer_id, $employer_name, $title, $amount) {
         return false;
     }
 
-    $system_comission = intval($amount * $system_comission_percent / 100);
+    $system_comission = intval($amount * $system_commission_percent / 100);
 
     $order_id = query_multiple_params(USERS_DB_MASTER,
         "INSERT INTO orders (title, reward, employer_id, employer_name, comission) 
@@ -73,24 +79,39 @@ function create_order($employer_id, $employer_name, $title, $amount) {
         return false;
     }
 
-    $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
+    /** По идее эта операция атомарна, хотя это не написано ни в документации, ни в книгах.
+     *  Аналогично и логичнее для меня будет сделать так.
+     *
+     *      AUTOCOMMIT = 0;
+     *      BEGIN;
+     *      UPDATE users SET users.reserved_amount = users.reserved_amount - ?
+     *          WHERE users.id = ? AND users.reserved_amount >= ?;
+     *      UPDATE orders SET orders.status = 'paid'
+     *          WHERE orders.id = ? AND orders.status = 'created';
+     *      COMMIT;
+     *
+     *  Ну никак иначе без транзакций.
+     **/
+
+    /*  VISUAL EXPLAIN показывает, что стоимость такого запроса 1*/
+    $order_paid = query_multiple_params(USERS_DB_MASTER,
         "UPDATE users, orders
-            SET 
+            SET
               users.reserved_amount = users.reserved_amount - orders.reward,
-              orders.status = 'paid' 
-            WHERE users.id = ? 
+              orders.status = 'paid'
+            WHERE users.id = ?
               AND users.reserved_amount >= orders.reward
               AND orders.id = ?
               AND orders.status = 'created'",
         'ii', $employer_id, $order_id);
 
-    return $money_withdrawed;
+    return $order_paid;
 }
 
 function get_orders() {
     // todo limit, pagination
     return query(USERS_DB_SLAVE,
-        "SELECT id, title, reward, employer_name FROM orders LIMIT 15",
+        "SELECT id, title, reward, employer_name FROM orders WHERE status = 'paid' LIMIT 15",
         '', null);
 }
 

@@ -10,14 +10,15 @@ function process_order_complete($user) {
 
     $result = ['success' => false];
     if ($order_id) {
-        $received_amount = complete_order($order_id, $user);
+        $order_completed = complete_order($order_id, $user);
 
-        if ($received_amount) {
-            $result['success'] = true;
-            $result['received_amount'] = $received_amount;
-// TODO        $result['orders'] = updated orders;
-// TODO        $result['system_balance'] = balance;
+        if ($order_completed) {
+            $result = ['success' => true];
+            // get acc balance
+            // get sys acc balance
+            // get new orders
         } else {
+            // get new orders
             $result['msg'] = "Невозможно выполнить заказ. Обновите страницу";
         }
     }

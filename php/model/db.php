@@ -84,7 +84,7 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
 }
 
 // TODO: check fails
-function query($db, $query_statement, $types, $param) {
+function query($db, $query_statement, $types = '', $param = null) {
     global $database_connections, $database_initialized;
 
     if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
