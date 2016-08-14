@@ -162,3 +162,11 @@ function end_transaction($db) {
     global $database_connections;
     mysqli_commit($database_connections[$db]);
 }
+
+function single_result($result) {
+    if ($result) {
+        return $result[0];
+    } else {
+        return false;
+    }
+}

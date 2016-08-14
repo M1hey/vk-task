@@ -3,6 +3,7 @@
 require_once dirname(__DIR__) . '/view/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/model/order.php';
+require_once dirname(__DIR__) . '/model/system.php';
 
 // todo refactor: it's more than controller now
 function process_order_complete($user) {
@@ -10,16 +11,27 @@ function process_order_complete($user) {
 
     $result = ['success' => false];
     if ($order_id) {
-        $order_completed = complete_order($order_id, $user);
+        $order_completed = complete_order($order_id, $user['id']);
 
         if ($order_completed) {
             $result = ['success' => true];
-            // get acc balance
+
+            $updated_user = get_user_by_id($user['id']);
+            if ($updated_user) {
+                $result['new_balance'] = $updated_user['balance'];
+                $result['reward'] = $updated_user['balance'] - $user['balance'];
+            }
+
             // get sys acc balance
-            // get new orders
+            $system_balance = get_system_balance();
+            if ($system_balance) {
+                $result['system_balance'] = $system_balance['balance'];
+            } else {
+                $result['system_balance'] = false;
+            }
         } else {
             // get new orders
-            $result['msg'] = "Невозможно выполнить заказ. Обновите страницу";
+            $result['msg'] = "Невозможно выполнить заказ. Его уже кто-то выполнил.";
         }
     }
 

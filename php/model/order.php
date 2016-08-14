@@ -1,7 +1,6 @@
 <?php
 
 require_once 'db.php';
-require_once dirname(__DIR__) . '/config/system_config.php';
 
 function complete_order($order_id, $user_id) {
     $order_reserved = query_multiple_params(USERS_DB_MASTER,
@@ -49,7 +48,7 @@ function complete_order($order_id, $user_id) {
 }
 
 function create_order($employer_id, $employer_name, $title, $amount) {
-    $system_commission_percent = query(USERS_DB_SLAVE, "SELECT commission_percent FROM system_account");
+    $system_commission_percent = single_result(query(USERS_DB_SLAVE, "SELECT commission_percent FROM system_account"));
 
     if (!$system_commission_percent) {
         return false;
@@ -117,6 +116,6 @@ function get_orders() {
 
 function get_orders_by_emp_id($employer_id) {
     return query(USERS_DB_SLAVE,
-        "SELECT id, title, reward FROM orders WHERE employer_id = ?",
+        "SELECT id, title, reward FROM orders WHERE employer_id = ? AND status = 'paid'",
         'i', $employer_id);
 }
