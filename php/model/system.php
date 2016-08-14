@@ -3,5 +3,10 @@
 require_once 'db.php';
 
 function get_system_balance() {
-    return single_result(query(USERS_DB_SLAVE, "SELECT balance FROM system_account WHERE id = 1"));
+    $result = single_result(query(USERS_DB_SLAVE, "SELECT balance FROM system_account WHERE id = 1"));
+    if ($result) {
+        return $result['balance'];
+    } else {
+        return false;
+    }
 }

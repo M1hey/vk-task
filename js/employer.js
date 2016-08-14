@@ -12,13 +12,13 @@ $(document).ready(function () {
     var form_selector = $("#emloyer-order-add-form-wrapper").find("form");
     override_form_submit({
         form_selector: form_selector,
-        success: function (data) {
-            console.log(data);
+        success: function (result) {
+            console.log(result);
             $('#place_order_btn').button('reset');
-            if (data) {
+            if (result['success']) {
                 show_add_order_form(false);
-                update_feed_content(data);
-                // todo update balance
+                update_feed_content(result['order_html']);
+                update_user_balance(result['balance']);
             } else {
                 show_order_error("Ошибка ввода");
             }
@@ -72,6 +72,7 @@ function hide_order_error() {
 }
 
 function show_order_error(msg) {
+    $('#place_order_btn').button('reset');
     $("#emloyer-order-add-form-wrapper").find("form").find(".alert").css('display', 'block');
     $("#order_err_msg").html(msg);
 }

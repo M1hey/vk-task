@@ -1,9 +1,3 @@
-<script type="text/javascript">
-    // looks like it's also controller's part
-    $(document).ready(function () {
-        update_user_balance(<?php global $acc_balance; echo $acc_balance; ?>);
-    });
-</script>
 <form class="worker_order_form" method="post" action="complete_order">
     <div class="order bordered-top">
         <div class="row">
@@ -11,7 +5,7 @@
                 <?php
                 global $order_id, $order_title, $order_amount, $order_employer;
                 echo "<span>" . $order_id . ":\t" . $order_employer . "<br/>";
-                echo $order_title . ":\t<b>" . $order_amount . "$</b></span>";
+                echo $order_title . ":\t<b>" . number_format($order_amount / 100, 2, '.', '') . "$</b></span>";
                 ?>
             </div>
             <div class="col-md-4">

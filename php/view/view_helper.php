@@ -10,3 +10,9 @@ function include_full_page($view_name) {
 function include_only_content($name) {
     include dirname(__DIR__) . '/view/' . $name;
 }
+
+function include_inline($name){
+    ob_start();
+    include dirname(__DIR__) . '/view/' . $name;
+    return ob_get_clean();
+}

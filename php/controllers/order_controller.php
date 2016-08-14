@@ -18,17 +18,12 @@ function process_order_complete($user) {
 
             $updated_user = get_user_by_id($user['id']);
             if ($updated_user) {
-                $result['new_balance'] = $updated_user['balance'];
-                $result['reward'] = $updated_user['balance'] - $user['balance'];
+                $result['new_balance'] = number_format($updated_user['balance'] / 100, 2, '.', '');
+                $result['reward'] = number_format(($updated_user['balance'] - $user['balance']) / 100, 2, '.', '');
             }
 
             // get sys acc balance
-            $system_balance = get_system_balance();
-            if ($system_balance) {
-                $result['system_balance'] = $system_balance['balance'];
-            } else {
-                $result['system_balance'] = false;
-            }
+            $result['system_balance'] = number_format(get_system_balance() / 100, 2, '.', '');
         } else {
             // get new orders
             $result['msg'] = "Невозможно выполнить заказ. Его уже кто-то выполнил.";
@@ -58,6 +53,8 @@ function validate_order_complete_input() {
 
 function process_add_order($user) {
     $input = validate_add_order_input($user['balance']);
+    $result = ['success' => false];
+
     if ($input) {
         $title = $input['title'];
         $amount = $input['amount'];
@@ -68,15 +65,17 @@ function process_add_order($user) {
             $order_amount = $amount;
             $acc_balance = $user['balance'] - $amount;
 
+
             // return new order and balance
-            include_only_content('order_view.php');
-        } else {
-            echo false;
+            $result = [
+                'success' => true,
+                'balance' => number_format($acc_balance / 100, 2, '.', ''),
+                'order_html' => include_inline('order_view.php')];
         }
-    } else {
-        echo false;
-        exit();
     }
+
+    header('Content-Type: application/json');
+    echo json_encode($result);
 }
 
 function validate_add_order_input($user_balance) {
@@ -87,7 +86,7 @@ function validate_add_order_input($user_balance) {
             // todo HOW to return proper error message!!!!
             return false;
         }
-        $amount = intval(htmlspecialchars($_POST['amount'], ENT_QUOTES));
+        $amount = floatval(htmlspecialchars($_POST['amount'], ENT_QUOTES));
         if (empty($amount)) {
 //            show_order_error("Введите стоимость");
             return false;
@@ -102,7 +101,7 @@ function validate_add_order_input($user_balance) {
         }
 
         return ['title' => $title,
-            'amount' => $amount];
+            'amount' => $amount * 100];
     }
     return false;
 }

@@ -16,7 +16,7 @@ $(document).ready(function () {
             data: form.serialize(),
             success: function (result) {
                 console.log(result);
-                result = JSON.parse(result);
+                // result = JSON.parse(result);
                 if (result['success']) {
                     update_worker_feed(form);
                     update_user_balance(user_balance + result['reward']);
