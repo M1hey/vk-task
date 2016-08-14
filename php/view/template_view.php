@@ -7,10 +7,13 @@
 
     <title>Test task</title>
 
-    <link href="/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet" media="screen"/>
+    <link href="/lib/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen"/>
+    <link href="/lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen"/>
     <link href="/css/style.css" rel="stylesheet" type="text/css"/>
 
-    <script src="/js/jquery-3.1.0.js" type="text/javascript"></script>
+    <script src="/js/jquery-2.2.4.js" type="text/javascript"></script>
+    <script src="/js/bootstrap.js" type="text/javascript"></script>
+
     <script src="/js/common.js" type="text/javascript"></script>
 </head>
 <body>

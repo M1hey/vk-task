@@ -77,14 +77,14 @@
                                 <fieldset>
                                     <div class="form-group">
                                         <input name="title" type="text" class="form-control"
-                                               placeholder="Краткое описание" value="Вскопать огород"/>
+                                               placeholder="Краткое описание" value="Трудная задача"/>
                                     </div>
                                     <div class="form-group">
                                         <input name="amount" type="text" class="form-control" placeholder="Стоимость"
                                                value="150"/>
                                     </div>
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-default btn-sm btn-block btn-success">
+                                        <button id="place_order_btn" type="submit" class="btn btn-default btn-sm btn-block btn-success" data-loading-text="Подождите">
                                             Разместить заказ
                                         </button>
                                     </div>

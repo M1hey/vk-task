@@ -5,12 +5,16 @@ $(document).ready(function () {
     $("#close-form-button").click(function () {
         show_add_order_form(false);
     });
+    $('#place_order_btn').on('click', function () {
+        $(this).button('loading');
+    });
 
     var form_selector = $("#emloyer-order-add-form-wrapper").find("form");
     override_form_submit({
         form_selector: form_selector,
         success: function (data) {
             console.log(data);
+            $('#place_order_btn').button('reset');
             if (data) {
                 show_add_order_form(false);
                 update_feed_content(data);
@@ -20,6 +24,7 @@ $(document).ready(function () {
             }
         },
         error: function (qxXHR, status, error) {
+            $('#place_order_btn').button('reset');
             msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
             show_order_error(msg);
         },

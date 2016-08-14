@@ -51,8 +51,22 @@
                             <?php
                             global $orders;
                             if ($orders && count($orders)) {
-                                global $order_id, $order_amount, $order_title, $order_employer;
                                 echo "<h2 class=\"orders-title\">Доступные заказы:</h2>";
+                            } else {
+                                echo "<h2 class=\"orders-title\">Нет доступных заказов</h2>";
+                            } ?>
+
+                            <div class="alert alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <span class="alert-msg"></span>
+                            </div>
+
+                            <?php
+                            global $orders;
+                            if ($orders && count($orders)) {
+                                global $order_id, $order_amount, $order_title, $order_employer;
 
                                 foreach ($orders as $order) {
                                     $order_id = $order['id'];
@@ -60,10 +74,8 @@
                                     $order_amount = $order['reward'];
                                     $order_employer = $order['employer_name'];
 
-                                    include 'worker_order_view.php';
+                                    include 'order_worker_view.php';
                                 }
-                            } else {
-                                echo "<h2 class=\"orders-title\">Нет доступных заказов</h2>";
                             }
                             ?>
                         </div>

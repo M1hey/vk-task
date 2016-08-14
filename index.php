@@ -14,8 +14,6 @@ header('accept-charset="UTF-8"');
 $controller_path = $routes[1];
 if ($controller_path == 'login' || isset($_GET['logout'])) {
     process_login();
-} elseif ($controller_path == 'favicon.ico') {
-    // ignored yet
 } else {
     $user = get_logged_in_user();
 
