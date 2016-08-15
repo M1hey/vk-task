@@ -21,14 +21,15 @@ function session_check() {
     $_SESSION['PREV_REMOTEADDR'] = $_SERVER['REMOTE_ADDR'];
 }
 
-function create_auth_token_for_user($user_id, $username) {
+function create_auth_token_for_user($user_id) {
     $new_token = generate_token(64);
-    if (create_auth_token($user_id, $new_token, hash("sha256", $username))) {
+    $selector = generate_token(64);
+    if (create_auth_token($user_id, $new_token, hash("sha256", $selector))) {
         $_SESSION['auth_token'] = $new_token;
-        $_SESSION['username'] = $username;
+        $_SESSION['selector'] = $selector;
         return true;
     } else {
-        error_log("Can't login user: \"" . $_POST['login'] . "\" because can't generate new token");
+        error_log("Can't login user: \"" . htmlspecialchars($_POST['login'], ENT_QUOTES) . "\" because can't generate new token");
         return false;
     }
 }
@@ -36,7 +37,7 @@ function create_auth_token_for_user($user_id, $username) {
 function get_logged_in_user() {
     if (isset($_SESSION['auth_token'])) {
         $auth_token = htmlspecialchars($_SESSION['auth_token'], ENT_QUOTES);
-        $selector_string = htmlspecialchars($_SESSION['username'], ENT_QUOTES);
+        $selector_string = htmlspecialchars($_SESSION['selector'], ENT_QUOTES);
 
         $auth_token = get_auth_token($auth_token);
         if ($auth_token) {

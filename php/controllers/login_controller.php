@@ -16,7 +16,7 @@ function process_login() {
                 echo false;
             }
 
-            if (create_auth_token_for_user($user['id'], $user['username'])) {
+            if (create_auth_token_for_user($user['id'])) {
                 show_user_ajax($user);
             } else {
                 echo false;
