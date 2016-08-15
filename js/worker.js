@@ -24,6 +24,7 @@ $(document).ready(function () {
                     }
                     show_complete_order_success("Вы получили " + result['reward'] + "$");
                 } else {
+                    // it could require relogin. Whatever
                     update_worker_feed(form);
                     show_complete_order_error(result['msg']);
                 }
@@ -48,15 +49,15 @@ function update_worker_feed(form) {
 }
 
 function show_complete_order_success(msg) {
-    $('#emloyer-orders').find('.alert').css('display', 'block');
-    $('#emloyer-orders').find('.alert').removeClass('alert-danger').addClass('alert-success');
-    $('#emloyer-orders').find('.alert-msg').text(msg);
+    $('#worker-orders').find('.alert').css('display', 'block');
+    $('#worker-orders').find('.alert').removeClass('alert-danger').addClass('alert-success');
+    $('#worker-orders').find('.alert-msg').text(msg);
 }
 
 function show_complete_order_error(msg) {
-    $('#emloyer-orders').find('.alert').css('display', 'block');
-    $('#emloyer-orders').find('.alert').removeClass('alert-success').addClass('alert-danger');
-    $('#emloyer-orders').find('.alert-msg').text(msg);
+    $('#worker-orders').find('.alert').css('display', 'block');
+    $('#worker-orders').find('.alert').removeClass('alert-success').addClass('alert-danger');
+    $('#worker-orders').find('.alert-msg').text(msg);
 }
 
 function update_feed_content(html) {

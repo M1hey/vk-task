@@ -7,6 +7,9 @@ require_once dirname(__DIR__) . '/model/system.php';
 
 // todo refactor: it's more than controller now
 function process_order_complete($user) {
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        echo false;
+    }
     $order_id = validate_order_complete_input();
 
     $result = [];
@@ -26,7 +29,8 @@ function process_order_complete($user) {
             $result['system_balance'] = number_format(get_system_balance() / 100, 2, '.', '');
         } else {
             // get new orders
-            $result['msg'] = "Невозможно выполнить заказ. Его уже кто-то выполнил.";
+            $result['msg'] = "Невозможно выполнить заказ. Возможно, он уже выполнен.";
+            $result['new_orders'] = "Невозможно выполнить заказ. Возможно, он уже выполнен.";
         }
     } else {
         $result['success'] = false;
@@ -52,6 +56,10 @@ function validate_order_complete_input() {
 }
 
 function process_add_order($user) {
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        echo false;
+    }
+
     $input = validate_add_order_input($user['balance']);
     $result = ['success' => false];
 

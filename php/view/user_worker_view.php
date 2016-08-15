@@ -47,7 +47,7 @@
             <div class="col-md-5">
                 <div class="content col-offset-md-1 col-md-11">
                     <div class="box">
-                        <div id="emloyer-orders">
+                        <div id="worker-orders">
                             <?php
                             global $orders;
                             if ($orders && count($orders)) {
