@@ -1,3 +1,9 @@
+# Allow only get and post
+RewriteEngine on
+RewriteCond %{THE_REQUEST} !^(POST|GET)\ /.*\ HTTP/1\.1$
+RewriteRule .* - [F]
+
+# Redirect all to index.php
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -6,6 +12,7 @@ RewriteCond %{REQUEST_URI} !=/favicon.ico
 RewriteCond %{REQUEST_URI} !=/jquery.min.map
 RewriteRule .* index.php [L]
 
+# Except /js/, /lib/ and static files
 RewriteCond %{REQUEST_URI} /js/.*
 RewriteCond %{REQUEST_URI} /lib/.*
 

@@ -5,9 +5,8 @@ require_once dirname(__DIR__) . '/services/security_service.php';
 
 /*prevent session fixation*/
 function session_check() {
-    session_start();
-
     set_session_params();
+    session_start();
 
     if (isset($_GET['logout']) ||
         (isset($_SESSION['PREV_REMOTEADDR']) && $_SERVER['REMOTE_ADDR'] !== $_SESSION['PREV_REMOTEADDR']) ||

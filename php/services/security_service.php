@@ -14,6 +14,7 @@ function set_session_params() {
 function set_headers() {
     header('accept-charset="UTF-8"');
     header('Content-Type: text/html');
+    header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: DENY');
     header('X-XSS-Protection: 1; mode=block');
 }
