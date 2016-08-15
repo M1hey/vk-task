@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="form-group">
                                         <input name="amount" type="text" class="form-control" placeholder="Стоимость"
-                                               value="150"/>
+                                               value="1.5"/>
                                     </div>
                                     <div class="form-group">
                                         <button id="place_order_btn" type="submit" class="btn btn-default btn-sm btn-block btn-success" data-loading-text="Подождите">

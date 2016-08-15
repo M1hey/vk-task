@@ -16,10 +16,9 @@ $(document).ready(function () {
             data: form.serialize(),
             success: function (result) {
                 console.log(result);
-                // result = JSON.parse(result);
                 if (result['success']) {
                     update_worker_feed(form);
-                    update_user_balance(user_balance + result['reward']);
+                    update_user_balance(result['new_balance']);
                     if (result['system_balance']) {
                         update_system_balance(result['system_balance']);
                     }
@@ -41,6 +40,11 @@ $(document).ready(function () {
 
 function update_worker_feed(form) {
     form.remove();
+    if ($(".order").length > 0) {
+        $(".orders-title").text("Доступные заказы");
+    } else {
+        $(".orders-title").text("Нет доступных заказов");
+    }
 }
 
 function show_complete_order_success(msg) {
