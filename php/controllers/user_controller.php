@@ -2,6 +2,7 @@
 
 require_once dirname(__DIR__) . '/view/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
+require_once dirname(__DIR__) . '/services/money.php';
 require_once dirname(__DIR__) . '/controllers/employer_controller.php';
 require_once dirname(__DIR__) . '/controllers/worker_controller.php';
 

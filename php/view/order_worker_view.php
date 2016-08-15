@@ -5,7 +5,7 @@
                 <?php
                 global $order_id, $order_title, $order_amount, $order_employer;
                 echo "<span>" . $order_id . ":\t" . $order_employer . "<br/>";
-                echo $order_title . ":\t<b>" . number_format($order_amount / 100, 2, '.', '') . "$</b></span>";
+                echo $order_title . ":\t<b>" . format_money($order_amount) . "$</b></span>";
                 ?>
             </div>
             <div class="col-md-4">

@@ -17,7 +17,7 @@ $(document).ready(function () {
             success: function (result) {
                 console.log(result);
                 if (result['success']) {
-                    update_worker_feed(form);
+                    handle_order_completed(form);
                     update_user_balance(result['new_balance']);
                     if (result['system_balance']) {
                         update_system_balance(result['system_balance']);
@@ -25,7 +25,7 @@ $(document).ready(function () {
                     show_complete_order_success("Вы получили " + result['reward'] + "$");
                 } else {
                     // it could require relogin. Whatever
-                    update_worker_feed(form);
+                    update_worker_feed(result['new_orders']);
                     show_complete_order_error(result['msg']);
                 }
             },
@@ -39,8 +39,14 @@ $(document).ready(function () {
     });
 });
 
-function update_worker_feed(form) {
-    form.remove();
+function update_worker_feed(new_orders) {
+    if (new_orders != '') {
+        $('#worker-orders').html(new_orders);
+        update_orders_title();
+    }
+}
+
+function update_orders_title() {
     if ($(".order").length > 0) {
         $(".orders-title").text("Доступные заказы");
     } else {
@@ -48,36 +54,19 @@ function update_worker_feed(form) {
     }
 }
 
+function handle_order_completed(form) {
+    form.remove();
+    update_orders_title();
+}
+
 function show_complete_order_success(msg) {
-    $('#worker-orders').find('.alert').css('display', 'block');
-    $('#worker-orders').find('.alert').removeClass('alert-danger').addClass('alert-success');
-    $('#worker-orders').find('.alert-msg').text(msg);
+    $('#orders-wrapper').find('.alert').css('display', 'block');
+    $('#orders-wrapper').find('.alert').removeClass('alert-danger').addClass('alert-success');
+    $('#orders-wrapper').find('.alert-msg').text(msg);
 }
 
 function show_complete_order_error(msg) {
-    $('#worker-orders').find('.alert').css('display', 'block');
-    $('#worker-orders').find('.alert').removeClass('alert-success').addClass('alert-danger');
-    $('#worker-orders').find('.alert-msg').text(msg);
+    $('#orders-wrapper').find('.alert').css('display', 'block');
+    $('#orders-wrapper').find('.alert').removeClass('alert-success').addClass('alert-danger');
+    $('#orders-wrapper').find('.alert-msg').text(msg);
 }
-
-function update_feed_content(html) {
-    // $('.orders-title').after(html);
-    // $('.orders-title').text("Ваши заказы:");
-}
-
-// function show_add_order_form(show_form) {
-//     $("#emloyer-order-add-form-wrapper").toggle(show_form);
-//     $("#emloyer-orders").toggle(!show_form);
-//     if (show_form) {
-//         hide_order_error();
-//     }
-// }
-//
-// function hide_order_error() {
-//     $("#emloyer-order-add-form-wrapper").find("form").find(".alert").css('display', 'none');
-// }
-//
-// function show_order_error(msg) {
-//     $("#emloyer-order-add-form-wrapper").find("form").find(".alert").css('display', 'block');
-//     $("#order_err_msg").html(msg);
-// }

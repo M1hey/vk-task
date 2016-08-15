@@ -2,6 +2,7 @@
 
 require_once dirname(__DIR__) . '/view/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
+require_once dirname(__DIR__) . '/services/money.php';
 require_once dirname(__DIR__) . '/model/order.php';
 require_once dirname(__DIR__) . '/model/system.php';
 
@@ -21,16 +22,34 @@ function process_order_complete($user) {
 
             $updated_user = get_user_by_id($user['id']);
             if ($updated_user) {
-                $result['new_balance'] = number_format($updated_user['balance'] / 100, 2, '.', '');
-                $result['reward'] = number_format(($updated_user['balance'] - $user['balance']) / 100, 2, '.', '');
+                $result['new_balance'] = format_money($updated_user['balance']);
+                $result['reward'] = format_money($updated_user['balance'] - $user['balance']);
             }
 
             // get sys acc balance
-            $result['system_balance'] = number_format(get_system_balance() / 100, 2, '.', '');
+            $result['system_balance'] = format_money(get_system_balance());
         } else {
             // get new orders
             $result['msg'] = "Невозможно выполнить заказ. Возможно, он уже выполнен.";
-            $result['new_orders'] = "Невозможно выполнить заказ. Возможно, он уже выполнен.";
+            $new_orders = '';
+
+            $orders = get_orders();
+            if ($orders && count($orders)) {
+                global $order_id, $order_amount, $order_title, $order_employer;
+
+                foreach ($orders as $order) {
+                    $order_id = $order['id'];
+                    $order_title = $order['title'];
+                    $order_amount = $order['reward'];
+                    $order_employer = $order['employer_name'];
+
+                    $new_orders = $new_orders . include_inline('order_worker_view.php');
+                }
+                $result['new_orders'] = $new_orders;
+            } else {
+                $result['new_orders'] = false;
+            }
+
         }
     } else {
         $result['success'] = false;
@@ -77,7 +96,7 @@ function process_add_order($user) {
             // return new order and balance
             $result = [
                 'success' => true,
-                'balance' => number_format($acc_balance / 100, 2, '.', ''),
+                'balance' => format_money($acc_balance),
                 'order_html' => include_inline('order_view.php')];
         }
     }

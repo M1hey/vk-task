@@ -5,7 +5,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         change_page_url('Страница пользователя', '/user');
-        update_user_balance(<?php global $acc_balance; echo number_format($acc_balance / 100, 2, '.', ''); ?>);
+        update_user_balance(<?php global $acc_balance; echo format_money($acc_balance); ?>);
     });
 </script>
 <div class="container">
@@ -26,14 +26,14 @@
                                    for="acc_balance">Баланс:</label>
                             <div id="acc_balance" class="col-md-2 col-sm-2 text-right">
                                 <?php global $acc_balance;
-                                echo number_format($acc_balance / 100, 2, '.', ''). '$'; ?></div>
+                                echo format_money($acc_balance). '$'; ?></div>
                         </div>
                         <div class="row">
                             <label class="col-sm-6 col-md-offset-1 col-sm-6 col-sm-offset-2 text-nowrap"
                                    for="sys_balance">Баланс системы:</label>
                             <div id="sys_balance" class="col-md-2 col-sm-2">
                                 <?php global $sys_balance;
-                                echo number_format($sys_balance / 100, 2, '.', ''). '$'; ?></div>
+                                echo format_money($sys_balance). '$'; ?></div>
                         </div>
                     </div>
                     <div class="action-button bordered-top text-center">

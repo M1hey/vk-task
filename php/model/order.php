@@ -6,8 +6,10 @@ function complete_order($order_id, $user_id) {
     $order_reserved = query_multiple_params(USERS_DB_MASTER,
         "UPDATE orders
             SET worker_id = ?, status = 'reserved' 
-            WHERE id = ? AND status = 'paid'",
-        'ii', $user_id, $order_id);
+            WHERE id = ? 
+              AND status = 'paid'
+              AND orders.employer_id != ?",
+        'iii', $user_id, $order_id, $user_id);
 
     if (!$order_reserved) {
         // TODO return new orders list
@@ -110,8 +112,7 @@ function create_order($employer_id, $employer_name, $title, $amount) {
 function get_orders() {
     // todo limit, pagination
     return query(USERS_DB_SLAVE,
-        "SELECT id, title, reward, employer_name FROM orders WHERE status = 'paid' LIMIT 15",
-        '', null);
+        "SELECT id, title, reward, employer_name FROM orders WHERE status = 'paid' LIMIT 15");
 }
 
 function get_orders_by_emp_id($employer_id) {
