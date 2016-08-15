@@ -1,5 +1,5 @@
 <?php
-require_once 'php/view/view_helper.html';
+require_once 'php/services/view_helper.php';
 require_once 'php/services/session_service.php';
 
 require_once 'php/controllers/login_controller.php';
