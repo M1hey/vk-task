@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__DIR__) . '/view/view_helper.php';
+require_once dirname(__DIR__) . '/view/view_helper.html';
 require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/controllers/user_controller.php';
 
@@ -25,6 +25,6 @@ function process_login() {
             echo false;
         }
     } else {
-        include_full_page('login_view.php');
+        include_full_page('login_view.html');
     }
 }

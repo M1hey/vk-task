@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__) . '/view/view_helper.php';
+require_once dirname(__DIR__) . '/view/view_helper.html';
 require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/services/money.php';
 require_once dirname(__DIR__) . '/model/order.php';
@@ -43,7 +43,7 @@ function process_order_complete($user) {
                     $order_amount = $order['reward'];
                     $order_employer = $order['employer_name'];
 
-                    $new_orders = $new_orders . include_inline('order_worker_view.php');
+                    $new_orders = $new_orders . include_inline('order_worker_view.html');
                 }
                 $result['new_orders'] = $new_orders;
             } else {
@@ -97,7 +97,7 @@ function process_add_order($user) {
             $result = [
                 'success' => true,
                 'balance' => format_money($acc_balance),
-                'order_html' => include_inline('order_view.php')];
+                'order_html' => include_inline('order_view.html')];
         }
     }
 

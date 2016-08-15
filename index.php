@@ -1,5 +1,5 @@
 <?php
-require_once 'php/view/view_helper.php';
+require_once 'php/view/view_helper.html';
 require_once 'php/services/session_service.php';
 
 require_once 'php/controllers/login_controller.php';
@@ -22,7 +22,7 @@ if ($controller_path == 'login' || isset($_GET['logout'])) {
     } elseif ($controller_path == 'complete_order') {
         process_order_complete(get_user_or_go_to_login());
     } else {
-        include_full_page('not_found_view.php');
+        include_full_page('not_found_view.html');
     }
 }
 
@@ -31,7 +31,7 @@ function get_user_or_go_to_login() {
     if ($user) {
         return $user;
     } else {
-        include_full_page('login_view.php');
+        include_full_page('login_view.html');
         exit();
     }
 }
