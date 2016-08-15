@@ -20,7 +20,7 @@ $(document).ready(function () {
                 update_feed_content(result['order_html']);
                 update_user_balance(result['balance']);
             } else {
-                show_order_error("Ошибка ввода");
+                show_order_error(result['msg']);
             }
         },
         error: function (qxXHR, status, error) {

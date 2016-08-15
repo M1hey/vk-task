@@ -15,31 +15,43 @@ CREATE TABLE `auth_tokens` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(60) NOT NULL,
-  `reward` int(11) NOT NULL,
-  `employer_id` int(11) DEFAULT NULL,
-  `employer_name` varchar(255) NOT NULL,
-  `worker_id` int(11) DEFAULT '0',
-  `status` enum('created','paid','reserved','reward_credited','completed') DEFAULT 'created',
-  `comission` int(11) DEFAULT NULL,
+  `id`            INT(11)      NOT NULL                                                AUTO_INCREMENT,
+  `title`         VARCHAR(60)  NOT NULL,
+  `reward`        INT(11)      NOT NULL,
+  `employer_id`   INT(11)                                                              DEFAULT NULL,
+  `employer_name` VARCHAR(255) NOT NULL,
+  `worker_id`     INT(11)                                                              DEFAULT '0',
+  `status`        ENUM ('created', 'paid', 'reserved', 'reward_credited', 'completed') DEFAULT 'created',
+  `comission`     INT(11)                                                              DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-CREATE TABLE `users` (
-  `id`            INT(11)      NOT NULL AUTO_INCREMENT,
-  `username`      VARCHAR(255) NOT NULL,
-  `password_hash` VARCHAR(60)  NOT NULL,
-  `account_type`  INT(11)      NOT NULL,
-  `balance`       INT(11)      NOT NULL DEFAULT '0',
-  `login`         VARCHAR(32)  NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_login_uindex` (`login`)
 )
   ENGINE = InnoDB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `password_hash` varchar(60) NOT NULL,
+  `account_type` int(11) NOT NULL,
+  `balance` int(11) NOT NULL DEFAULT '0',
+  `login` varchar(32) NOT NULL,
+  `reserved_amount` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_login_uindex` (`login`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO users (login, username, password_hash, account_type, balance)
 VALUES ('worker', 'Исполнитель Вася', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 1, 0),
   ('employer', 'Заказчик Петя', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 2, 1000000);
+
+CREATE TABLE `system_account` (
+  `id`                 INT(11) NOT NULL,
+  `balance`            INT(11) NOT NULL DEFAULT '0',
+  `commission_percent` INT(11) NOT NULL DEFAULT '5',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+INSERT INTO system_account (id, balance, commission_percent) VALUES (1,	0, 5);

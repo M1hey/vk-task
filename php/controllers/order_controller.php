@@ -82,7 +82,7 @@ function process_add_order($user) {
     $input = validate_add_order_input($user['balance']);
     $result = ['success' => false];
 
-    if ($input) {
+    if ($input['success']) {
         $title = $input['title'];
         $amount = $input['amount'];
 
@@ -99,6 +99,8 @@ function process_add_order($user) {
                 'balance' => format_money($acc_balance),
                 'order_html' => include_inline('order_view.html')];
         }
+    } else {
+        $result = $input;
     }
 
     header('Content-Type: application/json');
@@ -109,26 +111,27 @@ function validate_add_order_input($user_balance) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['title']) || !isset($_POST['amount'])) {
         $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
         if (empty($title)) {
-//            title must not be empty
-            // todo HOW to return proper error message!!!!
-            return false;
+            return ['success' => false,
+                'msg' => 'Введите заголовок'];
         }
         $amount = floatval(htmlspecialchars($_POST['amount'], ENT_QUOTES));
         if (empty($amount)) {
-//            show_order_error("Введите стоимость");
-            return false;
+            return ['success' => false,
+                'msg' => "Введите стоимость"];
         }
         if (!$amount || $amount <= 0) {
-//            show_order_error("Стоимость заказа заказа должна быть числом больше 0");
-            return false;
+            return ['success' => false,
+                'msg' => "Стоимость заказа заказа должна быть числом больше 0"];
         }
         if ($amount > $user_balance) {
-//            show_order_error("У вас недостаточно средств, чтобы разместить заказ");
-            return false;
+            return ['success' => false,
+                'msg' => "У вас недостаточно средств, чтобы разместить заказ"];
         }
 
-        return ['title' => $title,
+        return ['success' => true,
+            'title' => $title,
             'amount' => $amount * 100];
     }
-    return false;
+
+    return ['success' => false, 'msg' => 'Get метод не поддерживается'];
 }
