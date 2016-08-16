@@ -30,16 +30,19 @@ CREATE TABLE `orders` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password_hash` varchar(60) NOT NULL,
-  `account_type` int(11) NOT NULL,
-  `balance` int(11) NOT NULL DEFAULT '0',
-  `login` varchar(32) NOT NULL,
-  `reserved_amount` int(11) NOT NULL DEFAULT '0',
+  `id`              INT(11)      NOT NULL AUTO_INCREMENT,
+  `username`        VARCHAR(255) NOT NULL,
+  `password_hash`   VARCHAR(60)  NOT NULL,
+  `account_type`    INT(11)      NOT NULL,
+  `balance`         INT(11)      NOT NULL DEFAULT '0',
+  `login`           VARCHAR(32)  NOT NULL,
+  `reserved_amount` INT(11)      NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_login_uindex` (`login`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+)
+  ENGINE = InnoDB
+  AUTO_INCREMENT = 3
+  DEFAULT CHARSET = utf8;
 
 INSERT INTO users (login, username, password_hash, account_type, balance)
 VALUES ('worker', 'Исполнитель Вася', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 1, 0),
@@ -54,4 +57,11 @@ CREATE TABLE `system_account` (
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-INSERT INTO system_account (id, balance, commission_percent) VALUES (1,	0, 5);
+INSERT INTO system_account (id, balance, commission_percent) VALUES (1, 0, 5);
+
+CREATE TABLE connection_counters
+(
+  remote_addr           VARCHAR(32) PRIMARY KEY NOT NULL,
+  requests_count        INT(11) DEFAULT '1'     NOT NULL,
+  last_access_timestamp INT(11)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8;
