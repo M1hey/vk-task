@@ -24,7 +24,7 @@ function update_auth_token($token_id, $new_token) {
 function get_auth_token($token) {
     return single_result(query(AUTH_TOKEN_DB,
         "SELECT user_id, id, validator_hash FROM auth_tokens AS tokens
-          WHERE tokens.token = ?",
+            WHERE tokens.token = ?",
         's', $token));
 }
 

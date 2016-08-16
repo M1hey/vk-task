@@ -11,6 +11,7 @@ function db_init() {
     $database_connections[USERS_DB_SLAVE] = create_connection($users_db);
     $database_connections[USERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
     $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB_SLAVE];
+    $database_connections[MEMCACHED] = $database_connections[USERS_DB_SLAVE];
     $database_initialized = true;
 }
 
