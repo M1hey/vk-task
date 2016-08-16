@@ -1,7 +1,11 @@
 <?php
 
+/*Just an imitation of multiple databases*/
 define('USERS_DB_SLAVE', 'users_db');
 define('USERS_DB_MASTER', 'users_db');
+define('ORDERS_DB_SLAVE', 'orders_db');
+define('ORDERS_DB_MASTER', 'orders_db');
+define('SYSTEM_DB', 'system_db');
 define('AUTH_TOKEN_DB', 'sessions_db');
 define('MEMCACHED', 'memcached');
 

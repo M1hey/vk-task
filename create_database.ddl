@@ -1,7 +1,3 @@
-CREATE DATABASE IF NOT EXISTS vk_task
-  DEFAULT CHARACTER SET utf8
-  DEFAULT COLLATE utf8_general_ci;
-
 CREATE TABLE `auth_tokens` (
   `id`             INT(11) NOT NULL AUTO_INCREMENT,
   `validator_hash` VARCHAR(64)      DEFAULT NULL,
@@ -11,22 +7,63 @@ CREATE TABLE `auth_tokens` (
   UNIQUE KEY `auth_tokens_user_id_uindex` (`user_id`)
 )
   ENGINE = InnoDB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 12
+  DEFAULT CHARSET = utf8;
+
+CREATE TABLE `connection_counters` (
+  `remote_addr`           VARCHAR(32) NOT NULL,
+  `requests_count`        INT(11)     NOT NULL DEFAULT '1',
+  `last_access_timestamp` INT(11)              DEFAULT NULL,
+  PRIMARY KEY (`remote_addr`)
+)
+  ENGINE = MEMORY
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `orders` (
-  `id`            INT(11)      NOT NULL                                                AUTO_INCREMENT,
+  `id`            INT(11)      NOT NULL                             AUTO_INCREMENT,
   `title`         VARCHAR(60)  NOT NULL,
   `reward`        INT(11)      NOT NULL,
-  `employer_id`   INT(11)                                                              DEFAULT NULL,
+  `employer_id`   INT(11)                                           DEFAULT NULL,
   `employer_name` VARCHAR(255) NOT NULL,
-  `worker_id`     INT(11)                                                              DEFAULT '0',
-  `status`        ENUM ('created', 'paid', 'reserved', 'reward_credited', 'completed') DEFAULT 'created',
-  `comission`     INT(11)                                                              DEFAULT NULL,
+  `worker_id`     INT(11)                                           DEFAULT '0',
+  `status`        ENUM ('created', 'paid', 'reserved', 'completed') DEFAULT 'created',
+  `commission`    INT(11)                                           DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 82
+  DEFAULT CHARSET = utf8;
+
+CREATE TABLE `orders_transactions` (
+  `id`         INT(11)                              NOT NULL AUTO_INCREMENT,
+  `order_id`   INT(11)                              NOT NULL,
+  `worker_id`  INT(11)                              NOT NULL,
+  `reward`     INT(11)                              NOT NULL,
+  `commission` INT(11)                              NOT NULL,
+  `status`     ENUM ('order_reserved', 'completed') NOT NULL DEFAULT 'order_reserved',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  AUTO_INCREMENT = 10
+  DEFAULT CHARSET = utf8;
+
+CREATE TABLE `system_account` (
+  `id`                 INT(11) NOT NULL,
+  `balance`            INT(11) NOT NULL DEFAULT '0',
+  `commission_percent` INT(11) NOT NULL DEFAULT '5',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+CREATE TABLE `system_transactions` (
+  `id`         INT(11)                       NOT NULL,
+  `order_id`   INT(11)                       NOT NULL,
+  `commission` INT(11)                       NOT NULL,
+  `status`     ENUM ('created', 'completed') NOT NULL DEFAULT 'created',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `users` (
@@ -44,26 +81,14 @@ CREATE TABLE `users` (
   AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8;
 
-INSERT INTO users (login, username, password_hash, account_type, balance)
-VALUES ('worker', 'Исполнитель Вася', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 1, 0),
-  ('employer', 'Заказчик Петя', '$2y$12$4mjTejyfKrL5dLJPuztWXeX0owfhx8sBkqF/tkyWMFHlEjgcgnEfy', 2, 1000000);
-
-CREATE TABLE `system_account` (
-  `id`                 INT(11) NOT NULL,
-  `balance`            INT(11) NOT NULL DEFAULT '0',
-  `commission_percent` INT(11) NOT NULL DEFAULT '5',
+CREATE TABLE `users_transactions` (
+  `id`             INT(11)                       NOT NULL,
+  `order_id`       INT(11)                       NOT NULL,
+  `worker_id`      INT(11)                       NOT NULL,
+  `reward_to_user` INT(11)                       NOT NULL
+  COMMENT 'This reward already does not include commission.',
+  `status`         ENUM ('created', 'completed') NOT NULL DEFAULT 'created',
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
-INSERT INTO system_account (id, balance, commission_percent) VALUES (1, 0, 5);
-
-CREATE TABLE connection_counters
-(
-  remote_addr           VARCHAR(32) PRIMARY KEY NOT NULL,
-  requests_count        INT(11) DEFAULT '1'     NOT NULL,
-  last_access_timestamp INT(11)
-)
-  ENGINE = MEMORY
   DEFAULT CHARSET = utf8;

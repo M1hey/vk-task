@@ -1,6 +1,6 @@
 <?php
 
-global $system_comission_percent;
+global $system_commission_percent;
 
 /*TODO Don't use hardcoded value*/
-$system_comission_percent = 5;
+$system_commission_percent = 5;

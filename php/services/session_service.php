@@ -61,10 +61,6 @@ function get_logged_in_user() {
 
         $auth_token = get_auth_token($auth_token);
         if ($auth_token) {
-            if ((time() - $auth_token['last_access']) <= 1) {
-                die("Too many requests");
-            }
-
             if (hash_equals(hash("sha256", $selector_string), $auth_token['validator_hash'])) {
                 $new_token = generate_token(64);
 

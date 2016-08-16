@@ -8,9 +8,13 @@ require_once dirname(__DIR__) . '/config/db_config.php';
 function db_init() {
     global $users_db, $database_connections, $database_initialized;
 
+    /*Mocking multi database functionality*/
     $database_connections[USERS_DB_SLAVE] = create_connection($users_db);
     $database_connections[USERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
     $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB_SLAVE];
+    $database_connections[ORDERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
+    $database_connections[ORDERS_DB_SLAVE] = $database_connections[USERS_DB_SLAVE];
+    $database_connections[SYSTEM_DB] = $database_connections[USERS_DB_SLAVE];
     $database_connections[MEMCACHED] = $database_connections[USERS_DB_SLAVE];
     $database_initialized = true;
 }

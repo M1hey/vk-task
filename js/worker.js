@@ -15,6 +15,7 @@ $(document).ready(function () {
             url: form.attr('action'),
             data: form.serialize(),
             success: function (result) {
+                form.find('.complete-btn').button('reset');
                 console.log(result);
                 if (result['success']) {
                     handle_order_completed(form);
@@ -30,6 +31,7 @@ $(document).ready(function () {
                 }
             },
             error: function (qxXHR, status, error) {
+                form.find('.complete-btn').button('reset');
                 msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
                 show_complete_order_error(msg);
             }

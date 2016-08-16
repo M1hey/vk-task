@@ -5,7 +5,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         change_page_url('Страница пользователя', '/user');
-        update_user_balance(<?php global $acc_balance; echo format_money($acc_balance); ?>);
+        update_user_balance('<?php global $acc_balance; echo format_money($acc_balance); ?>');
     });
 </script>
 <div class="container">
