@@ -3,14 +3,12 @@
 require_once dirname(__DIR__) . '/services/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/services/money.php';
+require_once dirname(__DIR__) . '/services/user_input_service.php';
 require_once dirname(__DIR__) . '/model/order.php';
 require_once dirname(__DIR__) . '/model/system.php';
 
 // todo refactor: it's more than controller now
 function process_order_complete($user) {
-    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        echo false;
-    }
     $order_id = validate_order_complete_input();
 
     $result = [];
@@ -62,15 +60,9 @@ function process_order_complete($user) {
 
 function validate_order_complete_input() {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['order_id'])) {
-        $order_id = intval(htmlspecialchars($_POST['order_id'], ENT_QUOTES));
-
-        if (!$order_id || $order_id <= 0) {
-//            show_order_error("Стоимость заказа заказа должна быть числом больше 0");
-            return false;
-        }
-
-        return $order_id;
+        return check_uint($_POST['order_id']);
     }
+
     return false;
 }
 
@@ -113,12 +105,12 @@ function process_add_order($user) {
 
 function validate_add_order_input($user_balance) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['title']) || !isset($_POST['amount'])) {
-        $title = htmlspecialchars(strip_tags($_POST['title']), ENT_QUOTES);
+        $title = check_str($_POST['title']);
         if (empty($title)) {
             return ['success' => false,
                 'msg' => 'Введите заголовок'];
         }
-        $amount = floatval(htmlspecialchars($_POST['amount'], ENT_QUOTES));
+        $amount = check_float($_POST['amount']);
         if (empty($amount)) {
             return ['success' => false,
                 'msg' => "Введите стоимость"];

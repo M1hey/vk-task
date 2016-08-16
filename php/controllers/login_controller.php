@@ -1,14 +1,15 @@
 <?php
 require_once dirname(__DIR__) . '/services/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
+require_once dirname(__DIR__) . '/services/user_input_service.php';
 require_once dirname(__DIR__) . '/controllers/user_controller.php';
 
 function process_login() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user = get_user_by_login(trim(htmlspecialchars($_POST['login']), ENT_QUOTES));
+        $user = get_user_by_login(check_str_trim($_POST['login']));
 
         if ($user) {
-            $password = trim(htmlspecialchars($_POST['password'], ENT_QUOTES));
+            $password = check_str_trim($_POST['password']);
 
             if (password_verify($password, $user['password_hash'])) {
                 unset($user['password_hash']);

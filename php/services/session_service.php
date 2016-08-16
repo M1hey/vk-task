@@ -3,6 +3,7 @@
 require_once dirname(__DIR__) . '/model/session.php';
 require_once dirname(__DIR__) . '/model/connection_counter.php';
 require_once dirname(__DIR__) . '/services/security_service.php';
+require_once dirname(__DIR__) . '/services/user_input_service.php';
 
 /*prevent session fixation*/
 function session_check() {
@@ -49,15 +50,15 @@ function create_auth_token_for_user($user_id) {
         $_SESSION['selector'] = $selector;
         return true;
     } else {
-        error_log("Can't login user: \"" . htmlspecialchars($_POST['login'], ENT_QUOTES) . "\" because can't generate new token");
+        error_log("Can't login user: \"" . check_str_trim($_POST['login']) . "\" because can't generate new token");
         return false;
     }
 }
 
 function get_logged_in_user() {
     if (isset($_SESSION['auth_token'])) {
-        $auth_token = htmlspecialchars($_SESSION['auth_token'], ENT_QUOTES);
-        $selector_string = htmlspecialchars($_SESSION['selector'], ENT_QUOTES);
+        $auth_token = check_str($_SESSION['auth_token']);
+        $selector_string = check_str($_SESSION['selector']);
 
         $auth_token = get_auth_token($auth_token);
         if ($auth_token) {

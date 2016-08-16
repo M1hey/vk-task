@@ -5,7 +5,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         change_page_url('Страница пользователя', '/user');
-        update_user_balance(<?php global $acc_balance; echo format_money($acc_balance); ?>);
+        update_user_balance('<?php global $acc_balance; echo format_money($acc_balance); ?>');
     });
 </script>
 <div class="container">
@@ -54,14 +54,14 @@
                                 global $order_amount, $order_title;
                                 echo "<h2 class=\"orders-title\">Ваши заказы:</h2>";
 
-                                foreach ($orders as $order) {
-                                    $order_title = $order['title'];
-                                    $order_amount = $order['reward'];
+                            foreach ($orders as $order) {
+                            $order_title = $order['title'];
+                            $order_amount = $order['reward'];
 
-                                    include 'order_view.html';
-                                }
+                            include 'order_view.html';
+                            }
                             } else {
-                                echo "<h2 class=\"orders-title\">У вас пока нет размещённых заказов</h2>";
+                            echo "<h2 class=\"orders-title\">У вас пока нет размещённых заказов</h2>";
                             }
                             ?>
                         </div>
@@ -84,7 +84,9 @@
                                                value="1.5"/>
                                     </div>
                                     <div class="form-group">
-                                        <button id="place_order_btn" type="submit" class="btn btn-default btn-sm btn-block btn-success" data-loading-text="Подождите">
+                                        <button id="place_order_btn" type="submit"
+                                                class="btn btn-default btn-sm btn-block btn-success"
+                                                data-loading-text="Подождите">
                                             Разместить заказ
                                         </button>
                                     </div>

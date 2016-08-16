@@ -1,6 +1,7 @@
 <?php
 require_once 'php/services/view_helper.php';
 require_once 'php/services/session_service.php';
+require_once 'php/services/user_input_service.php';
 
 require_once 'php/controllers/login_controller.php';
 require_once 'php/controllers/user_controller.php';
@@ -11,7 +12,7 @@ set_headers();
 
 $routes = explode('/', $_SERVER['REQUEST_URI']);
 
-$controller_path = htmlspecialchars($routes[1], ENT_QUOTES);
+$controller_path = check_str($routes[1]);
 if ($controller_path == 'login' || isset($_GET['logout'])) {
     process_login();
 } else {
@@ -26,6 +27,7 @@ if ($controller_path == 'login' || isset($_GET['logout'])) {
     }
 }
 
+// TODO it fails on ajax
 function get_user_or_go_to_login() {
     $user = get_logged_in_user();
     if ($user) {
