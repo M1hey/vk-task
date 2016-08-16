@@ -76,7 +76,7 @@ function validate_order_complete_input() {
 
 function process_add_order($user) {
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        echo false;
+        die("Not allowed");
     }
 
     $input = validate_add_order_input($user['balance']);
@@ -98,6 +98,10 @@ function process_add_order($user) {
                 'success' => true,
                 'balance' => format_money($acc_balance),
                 'order_html' => include_inline('order_view.html')];
+        } else {
+            $result = [
+                'success' => false,
+                'msg' => "Не удалось добавить заказ. Попробуйте позже или измените входные данные."];
         }
     } else {
         $result = $input;
@@ -109,7 +113,7 @@ function process_add_order($user) {
 
 function validate_add_order_input($user_balance) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['title']) || !isset($_POST['amount'])) {
-        $title = htmlspecialchars($_POST['title'], ENT_QUOTES);
+        $title = htmlspecialchars(strip_tags($_POST['title']), ENT_QUOTES);
         if (empty($title)) {
             return ['success' => false,
                 'msg' => 'Введите заголовок'];
