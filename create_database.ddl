@@ -64,4 +64,6 @@ CREATE TABLE connection_counters
   remote_addr           VARCHAR(32) PRIMARY KEY NOT NULL,
   requests_count        INT(11) DEFAULT '1'     NOT NULL,
   last_access_timestamp INT(11)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+)
+  ENGINE = MEMORY
+  DEFAULT CHARSET = utf8;
