@@ -1,3 +1,5 @@
+php_value session.use_only_cookies 1
+
 # Allow only get and post
 RewriteEngine on
 RewriteCond %{THE_REQUEST} !^(POST|GET)\ /.*

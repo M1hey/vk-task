@@ -7,6 +7,7 @@ require_once 'php/controllers/login_controller.php';
 require_once 'php/controllers/user_controller.php';
 require_once 'php/controllers/order_controller.php';
 
+//TODO disable connection without cookies
 session_check();
 set_headers();
 
