@@ -17,7 +17,7 @@ function session_check() {
         session_restart();
     }
 
-//    check_requests_per_period();
+    check_requests_per_period();
 
     session_regenerate_id(true); // Generate a new session identifier
 

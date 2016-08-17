@@ -5,18 +5,25 @@ $database_initialized = false;
 
 require_once dirname(__DIR__) . '/config/db_config.php';
 
-function db_init() {
+function db_check_init() {
     global $users_db, $database_connections, $database_initialized;
 
-    /*Mocking multi database functionality*/
-    $database_connections[USERS_DB_SLAVE] = create_connection($users_db);
-    $database_connections[USERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
-    $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB_SLAVE];
-    $database_connections[ORDERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
-    $database_connections[ORDERS_DB_SLAVE] = $database_connections[USERS_DB_SLAVE];
-    $database_connections[SYSTEM_DB] = $database_connections[USERS_DB_SLAVE];
-    $database_connections[MEMCACHED] = $database_connections[USERS_DB_SLAVE];
-    $database_initialized = true;
+    if (!$database_initialized) {/*Mocking multi database functionality*/
+        $database_connections[USERS_DB_SLAVE] = create_connection($users_db);
+        $database_connections[USERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
+        $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB_SLAVE];
+        $database_connections[ORDERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
+        $database_connections[ORDERS_DB_SLAVE] = $database_connections[USERS_DB_SLAVE];
+        $database_connections[SYSTEM_DB] = $database_connections[USERS_DB_SLAVE];
+        $database_connections[MEMCACHED] = $database_connections[USERS_DB_SLAVE];
+        $database_initialized = true;
+    }
+}
+
+function get_db_link_by_name($db_name) {
+    global $database_connections;
+
+    return $database_connections[$db_name];
 }
 
 function create_connection($db_opts) {

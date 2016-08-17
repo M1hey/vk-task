@@ -12,8 +12,7 @@ define('MEMCACHED', 'memcached');
 require_once 'db_init.php';
 
 function execute_in_transaction($db, $query_func) {
-    global $database_connections;
-    $link = $database_connections[$db];
+    $link = get_db_link_by_name($db);
 
     if (begin_transaction($db)) {
         $result = $query_func();
@@ -32,8 +31,6 @@ function execute_in_transaction($db, $query_func) {
 }
 
 function query_multiple_params($db, $query_statement, $types, ... $params) {
-    global $database_connections, $database_initialized;
-
     /*Prepare params*/
     /* Bind parameters. Types: s = string, i = integer, d = double,  b = blob */
     $converted_params = array();
@@ -46,12 +43,9 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
         $converted_params[$i] = &$params[$i];
     }
 
-    /* Prepare statement */
-    if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        db_init();
-    }
+    db_check_init();
 
-    $link = $database_connections[$db];
+    $link = get_db_link_by_name($db);
 
     $stmt = mysqli_prepare($link, $query_statement);
 
@@ -90,13 +84,9 @@ function query_multiple_params($db, $query_statement, $types, ... $params) {
 
 // TODO: check fails
 function query($db, $query_statement, $types = '', $param = null) {
-    global $database_connections, $database_initialized;
+    db_check_init();
 
-    if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        db_init();
-    }
-
-    $link = $database_connections[$db];
+    $link = get_db_link_by_name($db);
 
     $stmt = mysqli_prepare($link, $query_statement);
 
@@ -151,13 +141,9 @@ function get_var_dump($params) {
 // kind of private
 
 function begin_transaction($db) {
-    global $database_connections, $database_initialized;
-    /* Prepare statement */
-    if (!$database_initialized) {    // TODO: how to execute it once? http://php.net/manual/ru/mysqli.persistconns.php
-        db_init();
-    }
+    db_check_init();
 
-    $link = $database_connections[$db];
+    $link = get_db_link_by_name($db);
     $result = mysqli_autocommit($link, false);
     $result = $result && mysqli_begin_transaction($link, MYSQLI_TRANS_START_READ_WRITE);
     if (!$result) {
@@ -167,16 +153,15 @@ function begin_transaction($db) {
 }
 
 function rollback_transaction($db) {
-    global $database_connections;
-    $result = mysqli_rollback($database_connections[$db]);
+    $link = get_db_link_by_name($db);
+    $result = mysqli_rollback($link);
     if (!$result) {
         error_log("Can't start a transaction: [" . mysqli_errno($link) . "] " . mysqli_error($link));
     }
 }
 
 function end_transaction($db) {
-    global $database_connections;
-    mysqli_commit($database_connections[$db]);
+    mysqli_commit(get_db_link_by_name($db));
 }
 
 function single_result($result) {
