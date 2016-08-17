@@ -125,30 +125,18 @@ function mark_order_transaction_completed($order_id, $transaction_id) {
     return $success;
 }
 
-/*TODO it should be transactional as well*/
+/*recovery function not present*/
 function create_order($employer_id, $employer_name, $title, $amount) {
-    $system_commission_percent = single_result(query(USERS_DB_SLAVE, "SELECT commission_percent FROM system_account"));
+    $system_commission_percent = single_result(query(SYSTEM_DB, "SELECT commission_percent FROM system_account"));
 
     if (!$system_commission_percent) {
         return false;
     }
     $system_commission_percent = $system_commission_percent['commission_percent'];
 
-    $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
-        "UPDATE users
-            SET
-              balance = balance - ?,
-              reserved_amount = reserved_amount + ?
-            WHERE id = ? AND balance >= ?",
-        'iiii', $amount, $amount, $employer_id, $amount);
-
-    if (!$money_withdrawed) {
-        return false;
-    }
-
+    // optimistic order creation
     $system_commission = intval($amount * $system_commission_percent / 100);
-
-    $order_id = query_multiple_params(USERS_DB_MASTER,
+    $order_id = query_multiple_params(ORDERS_DB_MASTER,
         "INSERT INTO orders (title, reward, employer_id, employer_name, commission) 
             VALUES (?,?,?,?,?)",
         'siisi', $title, $amount, $employer_id, $employer_name, $system_commission);
@@ -156,32 +144,31 @@ function create_order($employer_id, $employer_name, $title, $amount) {
     if (!$order_id) {
         return false;
     }
+    // create transaction
+    $transaction_id = query_multiple_params(USERS_DB_MASTER,
+        "INSERT INTO order_creation_transactions (employer_id, order_id, amount) VALUES (?,?,?)",
+        'iii', $employer_id, $order_id, $amount);
+    if (!$transaction_id) {
+        return false;
+    }
 
-    /** По идее эта операция атомарна, хотя это не написано ни в документации, ни в книгах.
-     *  Аналогично и логичнее для меня будет сделать так.
-     *
-     *      AUTOCOMMIT = 0;
-     *      BEGIN;
-     *      UPDATE users SET users.reserved_amount = users.reserved_amount - ?
-     *          WHERE users.id = ? AND users.reserved_amount >= ?;
-     *      UPDATE orders SET orders.status = 'paid'
-     *          WHERE orders.id = ? AND orders.status = 'created';
-     *      COMMIT;
-     *
-     *  Ну никак иначе без транзакций.
-     **/
-
-    /*  VISUAL EXPLAIN показывает, что стоимость такого запроса 1*/
-    $order_paid = query_multiple_params(USERS_DB_MASTER,
-        "UPDATE users, orders
+    //      withdraw money - order_paid,
+    $money_withdrawed = query_multiple_params(USERS_DB_MASTER,
+        "UPDATE users AS u, order_creation_transactions AS t
             SET
-              users.reserved_amount = users.reserved_amount - orders.reward,
-              orders.status = 'paid'
-            WHERE users.id = ?
-              AND users.reserved_amount >= orders.reward
-              AND orders.id = ?
-              AND orders.status = 'created'",
-        'ii', $employer_id, $order_id);
+              u.balance = u.balance - t.amount,
+              t.status = 'order_paid'
+            WHERE u.id = ? 
+              AND t.id = ?
+              AND u.balance >= t.amount",
+        'ii', $employer_id, $transaction_id);
+
+    if (!$money_withdrawed) {
+        return false;
+    }
+
+    $order_paid = query(ORDERS_DB_MASTER,
+        "UPDATE orders AS o SET o.status = 'paid' WHERE o.id = ?", 'i', $order_id);
 
     return $order_paid;
 }

@@ -107,12 +107,23 @@ function query($db, $query_statement, $types = '', $param = null) {
         }
         if (!mysqli_stmt_execute($stmt)) return false;
         $result = mysqli_stmt_get_result($stmt);
-        if (!$result) return false;
-        $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        if (!$result_set) return false;
-        mysqli_stmt_close($stmt);
+        $affected_rows = mysqli_stmt_affected_rows($stmt);
+        if ($result) {
+            $result_set = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            if (!$result_set) return false;
+            mysqli_stmt_close($stmt);
 
-        return $result_set;
+            return $result_set;
+        } elseif ($affected_rows) {
+            $insert_id = mysqli_stmt_insert_id($stmt);
+            if ($insert_id) {
+                return $insert_id;
+            } else {
+                return $affected_rows;
+            }
+        } else {
+            return false;
+        }
     }, $query_statement, $param);
 }
 

@@ -8,7 +8,7 @@ function set_session_params() {
     session_name("vk_task");
     $domain = $_SERVER['SERVER_NAME'] == 'vk-task' ? 'vk-task' : 'o911998h.bget.ru';
     // secure == false since we don't have https set on test env
-    session_set_cookie_params(60, '/', $domain, false, true);
+    session_set_cookie_params(300, '/', $domain, false, true);
 }
 
 function set_headers() {

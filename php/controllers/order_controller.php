@@ -59,7 +59,7 @@ function process_order_complete($user) {
 }
 
 function validate_order_complete_input() {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['order_id'])) {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id'])) {
         return check_uint($_POST['order_id']);
     }
 
@@ -104,7 +104,7 @@ function process_add_order($user) {
 }
 
 function validate_add_order_input($user_balance) {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' || !isset($_POST['title']) || !isset($_POST['amount'])) {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['title']) && isset($_POST['amount'])) {
         $title = check_str($_POST['title']);
         if (empty($title)) {
             return ['success' => false,
@@ -129,5 +129,5 @@ function validate_add_order_input($user_balance) {
             'amount' => $amount * 100];
     }
 
-    return ['success' => false, 'msg' => 'Get метод не поддерживается'];
+    return ['success' => false, 'msg' => 'Неверный запрос'];
 }
