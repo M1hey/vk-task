@@ -12,15 +12,20 @@ $(document).ready(function () {
     var form_selector = $("#emloyer-order-add-form-wrapper").find("form");
     override_form_submit({
         form_selector: form_selector,
-        success: function (result) {
+        success: function (result, status, jqXHR) {
             console.log(result);
             $('#place_order_btn').button('reset');
-            if (result['success']) {
-                show_add_order_form(false);
-                update_feed_content(result['order_html']);
-                update_user_balance(result['balance']);
-            } else {
-                show_order_error(result['msg']);
+            if ('application/json' == jqXHR.getResponseHeader("content-type")) {
+                if (result['success']) {
+                    show_add_order_form(false);
+                    update_feed_content(result['order_html']);
+                    update_user_balance(result['balance']);
+                } else {
+                    show_order_error(result['msg']);
+                }
+            }
+            else {
+                show_order_error(result);
             }
         },
         error: function (qxXHR, status, error) {

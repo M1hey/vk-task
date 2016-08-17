@@ -12,23 +12,13 @@ session_check();
 set_headers();
 
 $routes = explode('/', $_SERVER['REQUEST_URI']);
-
 $allowed_get_without_csrf = array('login', 'user', '?logout');
-
 $controller_path = check_str($routes[1]);
 
-if (!check_csrf()) {
-    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        if (in_array($controller_path, $allowed_get_without_csrf, true)) {
-            create_csrf_token();
-        } else {
-            include_full_page('not_found_view.html');
-            exit();
-        }
-    } else {
-        die("HTTP/1.1 405 Method Not Allowed");
-    }
-}
+csrf_check($controller_path, $allowed_get_without_csrf,
+    function () {
+        include_full_page('not_found_view.html');
+    });
 
 if ($controller_path == 'login' || isset($_GET['logout'])) {
     process_login();
