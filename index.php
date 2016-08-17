@@ -15,10 +15,10 @@ $routes = explode('/', $_SERVER['REQUEST_URI']);
 $allowed_get_without_csrf = array('login', 'user', '?logout');
 $controller_path = check_str($routes[1]);
 
-csrf_check($controller_path, $allowed_get_without_csrf,
-    function () {
-        include_full_page('not_found_view.html');
-    });
+if (!csrf_check($controller_path, $allowed_get_without_csrf)) {
+    include_full_page('not_found_view.html');
+    exit();
+};
 
 if ($controller_path == 'login' || isset($_GET['logout'])) {
     process_login();

@@ -9,19 +9,22 @@ function create_csrf_token() {
     $_SESSION[CSRF] = $csrf_token;
 }
 
-function csrf_check($path, $allowed_get_without_csrf, $not_found_func) {
+function csrf_check($path, $allowed_get_without_csrf) {
     if (!csrf_is_set()) {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             if (in_array($path, $allowed_get_without_csrf, true)) {
+                // allow only particular paths
                 create_csrf_token();
             } else {
-                $not_found_func();
-                exit();
+                return false;
             }
         } else {
+            // don't allow POST without proper csrf token
             die("HTTP/1.1 405 Method Not Allowed");
         }
     }
+
+    return true;
 }
 
 function csrf_is_set() {
