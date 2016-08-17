@@ -9,10 +9,29 @@ define('PWD_HASH_COST', 12);
 
 function get_user_by_id($id) {
     return single_result(query(USERS_DB_SLAVE,
-        "SELECT id, username, account_type, balance FROM users WHERE id=?", 'i', $id));
+        "SELECT id, username, account_type, balance 
+           FROM users 
+          WHERE id=?", 'i', $id));
 }
 
 function get_user_by_login($login) {
     return single_result(query(USERS_DB_SLAVE,
-        "SELECT id, login, username, password_hash, account_type, balance FROM users WHERE login=?", 's', $login));
+        "SELECT id, login, username, password_hash, account_type, balance, failed_attempts, last_attempt_timestamp
+           FROM users
+          WHERE login=?", 's', $login));
+}
+
+function increase_user_login_failed($login) {
+    return query(USERS_DB_SLAVE,
+        "UPDATE users
+            SET failed_attempts = failed_attempts + 1,
+                last_attempt_timestamp = UNIX_TIMESTAMP()
+          WHERE login=?", 's', $login);
+}
+
+function reset_user_failed_attempts($login) {
+    return query(USERS_DB_SLAVE,
+        "UPDATE users
+            SET failed_attempts = 0
+          WHERE login=?", 's', $login);
 }

@@ -67,18 +67,19 @@ CREATE TABLE `system_transactions` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `users` (
-  `id`              INT(11)      NOT NULL AUTO_INCREMENT,
-  `username`        VARCHAR(255) NOT NULL,
-  `password_hash`   VARCHAR(60)  NOT NULL,
-  `account_type`    INT(11)      NOT NULL,
-  `balance`         INT(11)      NOT NULL DEFAULT '0',
-  `login`           VARCHAR(32)  NOT NULL,
-  `reserved_amount` INT(11)      NOT NULL DEFAULT '0',
+  `id`                     INT(11)      NOT NULL AUTO_INCREMENT,
+  `username`               VARCHAR(255) NOT NULL,
+  `password_hash`          VARCHAR(60)  NOT NULL,
+  `account_type`           INT(11)      NOT NULL,
+  `balance`                INT(11)      NOT NULL DEFAULT '0',
+  `login`                  VARCHAR(32)  NOT NULL,
+  `failed_attempts`        INT(11)      NOT NULL DEFAULT '0',
+  `last_attempt_timestamp` INT(11)               DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_login_uindex` (`login`)
 )
   ENGINE = InnoDB
-  AUTO_INCREMENT = 3
+  AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `users_transactions` (

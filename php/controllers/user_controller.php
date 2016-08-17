@@ -11,9 +11,9 @@ function process_user($user) {
     include_full_page(get_view_name_by_type($user));
 }
 
-function show_user_ajax($user) {
+function get_user_view_ajax($user) {
     prepare_view($user);
-    include_only_content(get_view_name_by_type($user));
+    return include_content_in_var(get_view_name_by_type($user));
 }
 
 function get_view_name_by_type($user) {

@@ -11,7 +11,7 @@ function include_only_content($name) {
     include dirname(__DIR__) . '/view/' . $name;
 }
 
-function include_inline($name){
+function include_content_in_var($name){
     ob_start();
     include dirname(__DIR__) . '/view/' . $name;
     return ob_get_clean();

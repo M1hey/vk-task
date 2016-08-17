@@ -41,7 +41,7 @@ function process_order_complete($user) {
                     $order_amount = $order['reward'];
                     $order_employer = $order['employer_name'];
 
-                    $new_orders = $new_orders . include_inline('order_worker_view.html');
+                    $new_orders = $new_orders . include_content_in_var('order_worker_view.html');
                 }
                 $result['new_orders'] = $new_orders;
             } else {
@@ -89,7 +89,7 @@ function process_add_order($user) {
             $result = [
                 'success' => true,
                 'balance' => format_money($acc_balance),
-                'order_html' => include_inline('order_view.html')];
+                'order_html' => include_content_in_var('order_view.html')];
         } else {
             $result = [
                 'success' => false,

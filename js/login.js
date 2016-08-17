@@ -5,12 +5,16 @@ $(document).ready(function () {
 
     override_form_submit({
         form_selector: $(".login-form"),
-        success: function (data) {
+        success: function (result, status, jqXHR) {
             $('#login_button').button('reset');
-            if (data) {
-                update_page_content(data);
+            if ('application/json' == jqXHR.getResponseHeader("content-type")) {
+                if (result['success']) {
+                    update_page_content(result['html']);
+                } else {
+                    show_login_error(result['msg']);
+                }
             } else {
-                show_login_error("Неправильный логин или пароль");
+                show_login_error(result);
             }
         },
         error: function (qxXHR, status, error) {
