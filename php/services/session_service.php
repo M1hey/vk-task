@@ -14,7 +14,7 @@ function session_check() {
         (isset($_SESSION['PREV_REMOTEADDR']) && $_SERVER['REMOTE_ADDR'] !== $_SESSION['PREV_REMOTEADDR']) ||
         (isset($_SESSION['PREV_USERAGENT']) && $_SERVER['HTTP_USER_AGENT'] !== $_SESSION['PREV_USERAGENT'])
     ) {
-        session_clear();
+        session_restart();
     }
 
 //    check_requests_per_period();
@@ -68,7 +68,7 @@ function get_logged_in_user() {
                 if (!update_auth_token($auth_token['id'], $new_token)) {
 //                    $new_token = $auth_token; // TODO what should we do on fail generating new token?
                     error_log("Can't update auth_token for user: " . $auth_token['user_id']);
-                    session_clear();
+                    session_restart();
                     return false;
                 }
 
@@ -85,6 +85,11 @@ function get_logged_in_user() {
         }
     }
     return false;
+}
+
+function session_restart() {
+    session_clear();
+    session_start();
 }
 
 function session_clear() {

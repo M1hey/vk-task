@@ -17,6 +17,12 @@
     <script src="/js/common.js" type="text/javascript"></script>
 </head>
 <body>
+<script type="text/javascript">
+    // looks like it's also controller's part
+    $(document).ready(function () {
+        setup_token('<?php global $csrf_token; echo $csrf_token;?>');
+    });
+</script>
 <div id="content-wrapper" class="content-wrapper">
     <?php global $view;
     include dirname(__DIR__) . "/view/" . $view; ?>

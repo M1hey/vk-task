@@ -25,9 +25,13 @@ $(document).ready(function () {
                     }
                     show_complete_order_success("Вы получили " + result['reward'] + "$");
                 } else {
-                    // it could require relogin. Whatever
-                    update_worker_feed(result['new_orders']);
-                    show_complete_order_error(result['msg']);
+                    if(result['msg']) {
+                        show_complete_order_error(result['msg']);
+                        // it could require relogin. Whatever
+                        update_worker_feed(result['new_orders']);
+                    } else {
+                        show_complete_order_error("Невозможно совершить операцию");
+                    }
                 }
             },
             error: function (qxXHR, status, error) {

@@ -2,6 +2,7 @@
 require_once dirname(__DIR__) . '/services/view_helper.php';
 require_once dirname(__DIR__) . '/services/session_service.php';
 require_once dirname(__DIR__) . '/services/user_input_service.php';
+require_once dirname(__DIR__) . '/services/csrf.php';
 require_once dirname(__DIR__) . '/controllers/user_controller.php';
 
 function process_login() {

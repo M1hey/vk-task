@@ -5,6 +5,12 @@ $(document).ready(function () {
     $("#add_err").css('display', 'none');
 });
 
+function setup_token(token) {
+    $.ajaxSetup({
+        headers: {'X-CSRF': token}
+    });
+}
+
 function update_system_balance(new_balance) {
     system_balance = new_balance;
     $("#sys_balance").html(system_balance + '$');
