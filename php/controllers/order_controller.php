@@ -99,9 +99,10 @@ function validate_add_order_input($user_balance) {
             return ['success' => false,
                 'msg' => "Введите стоимость"];
         }
-        if (!$amount || $amount <= 0) {
+        $amount = round($amount, 2);
+        if (!$amount || $amount <= 1) {
             return ['success' => false,
-                'msg' => "Стоимость заказа заказа должна быть числом больше 0"];
+                'msg' => "Стоимость заказа должна быть числом больше 1$"];
         }
         if ($amount > $user_balance) {
             return ['success' => false,
