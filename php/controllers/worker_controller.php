@@ -12,5 +12,5 @@ function process_worker($user) {
     $acc_balance = $user['balance'];
     $sys_balance = get_system_balance();
 
-    $orders = get_orders();
+    $orders = get_first_orders();
 }

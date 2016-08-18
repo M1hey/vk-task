@@ -29,25 +29,9 @@ function process_order_complete($user) {
         } else {
             // get new orders
             $result['msg'] = "Невозможно выполнить заказ. Возможно, он уже выполнен.";
-            $new_orders = '';
 
-            $orders = get_orders();
-            if ($orders && count($orders)) {
-                global $order_id, $order_amount, $order_title, $order_employer;
-
-                foreach ($orders as $order) {
-                    $order_id = $order['id'];
-                    $order_title = $order['title'];
-                    $order_amount = $order['reward'];
-                    $order_employer = $order['employer_name'];
-
-                    $new_orders = $new_orders . include_content_in_var('order_worker_view.php');
-                }
-                $result['new_orders'] = $new_orders;
-            } else {
-                $result['new_orders'] = false;
-            }
-
+            $orders = get_first_orders();
+            $result['new_orders'] = render_orders($orders);
         }
     } else {
         $result['success'] = false;
@@ -130,4 +114,48 @@ function validate_add_order_input($user_balance) {
     }
 
     return ['success' => false, 'msg' => 'Неверный запрос'];
+}
+
+function process_load_more_orders() {
+    $last_order_id = get_load_more_orders_validated_input();
+
+    $result = ['success' => false];
+
+    if ($last_order_id) {
+        $orders = get_orders_from($last_order_id);
+        $result = ['success' => true];
+        $result['more_orders'] = render_orders($orders);
+    } else {
+        $result['msg'] = "Не удалось загрузить заказы.";
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($result);
+}
+
+function render_orders($orders) {
+    $orders_html_str = '';
+    if ($orders && count($orders)) {
+        global $order_id, $order_amount, $order_title, $order_employer;
+
+        foreach ($orders as $order) {
+            $order_id = $order['id'];
+            $order_title = $order['title'];
+            $order_amount = $order['reward'];
+            $order_employer = $order['employer_name'];
+
+            $orders_html_str = $orders_html_str . include_content_in_var('order_worker_view.php');
+        }
+        return $orders_html_str;
+    } else {
+        return false;
+    }
+}
+
+function get_load_more_orders_validated_input() {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['last_order_id'])) {
+        return check_uint($_POST['last_order_id']);
+    }
+
+    return false;
 }

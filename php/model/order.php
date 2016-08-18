@@ -173,10 +173,18 @@ function create_order($employer_id, $employer_name, $title, $amount) {
     return $order_paid;
 }
 
-function get_orders() {
-    // todo limit, pagination
+function get_orders_from($order_id) {
     return query(ORDERS_DB_SLAVE,
-        "SELECT id, title, reward, employer_name FROM orders WHERE status = 'paid' LIMIT 15");
+        "SELECT id, title, reward, employer_name 
+           FROM orders 
+          WHERE status = 'paid' 
+            AND id > ? 
+            LIMIT 3", 'i', $order_id);
+}
+
+function get_first_orders() {
+    return query(ORDERS_DB_SLAVE,
+        "SELECT id, title, reward, employer_name FROM orders WHERE status = 'paid' LIMIT 3");
 }
 
 function get_orders_by_emp_id($employer_id) {

@@ -30,6 +30,8 @@ if ($controller_path == 'login' || isset($_GET['logout'])) {
         process_add_order(get_user_or_go_to_login());
     } elseif ($controller_path == 'complete_order') {
         process_order_complete(get_user_or_go_to_login());
+    } elseif ($controller_path == 'load_more_orders') {
+        process_load_more_orders();
     } else {
         include_full_page('not_found_view.php');
     }

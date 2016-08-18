@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="form-group">
                                         <input name="amount" type="text" class="form-control" placeholder="Стоимость"
-                                               value="4.2"/>
+                                               value="0.42"/>
                                     </div>
                                     <div class="form-group">
                                         <button id="place_order_btn" type="submit"

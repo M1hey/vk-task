@@ -54,8 +54,8 @@
                         } else {
                             echo "<h2 class=\"orders-title\">Нет доступных заказов</h2>";
                         } ?>
-                        <div class="alert alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <div class="alert" role="alert">
+                            <button type="button" class="close" onclick="$('.alert').hide()" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                             <span class="alert-msg"></span>
@@ -76,6 +76,9 @@
                                 }
                             }
                             ?>
+                        </div>
+                        <div class="text-center">
+                            <button id="load_more_btn" class="btn btn-link" data-loading-text="Загрузка ...">Загрузить ещё</button>
                         </div>
                     </div>
                 </div>
