@@ -93,3 +93,15 @@ CREATE TABLE `users_transactions` (
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
+
+CREATE TABLE `order_creation_transactions` (
+  `id`          INT(11)                              NOT NULL AUTO_INCREMENT,
+  `employer_id` INT(11)                              NOT NULL,
+  `order_id`    INT(11)                              NOT NULL,
+  `amount`      INT(11)                              NOT NULL,
+  `status`      ENUM ('order_created', 'order_paid') NOT NULL DEFAULT 'order_created',
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  AUTO_INCREMENT = 23
+  DEFAULT CHARSET = utf8;

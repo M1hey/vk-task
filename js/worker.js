@@ -2,10 +2,6 @@ var user_balance = 0;
 var last_order_id = 0;
 
 $(document).ready(function () {
-    $(".complete-btn").click(function () {
-        $(this).button('loading');
-    });
-
     $("#load_more_btn").click(function () {
         var load_more_btn = $(this);
         load_more_btn.button('loading');
@@ -41,6 +37,15 @@ $(document).ready(function () {
         });
     });
 
+    override_orders_submit();
+});
+
+function override_orders_submit() {
+    $(".complete-btn").click(function () {
+        $(this).button('loading');
+    });
+
+    $(".worker_order_form").unbind('submit');
     $(".worker_order_form").submit(function (event) {
         event.preventDefault();
 
@@ -79,7 +84,7 @@ $(document).ready(function () {
 
         return false;
     });
-});
+}
 
 function update_last_order_id(order_id) {
     if (order_id > last_order_id) {
@@ -89,6 +94,7 @@ function update_last_order_id(order_id) {
 
 function handle_load_orders(new_orders) {
     $('#worker-orders').append(new_orders);
+    override_orders_submit();
 }
 
 function update_worker_feed(new_orders) {

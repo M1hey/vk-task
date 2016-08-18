@@ -10,8 +10,7 @@ $users_db = [
     DB_USER => "root",
     DB_PASSWORD => "",
     DB_DATABASE => "vk_task"
+//    DB_USER => "o911998h_mysql",
+//    DB_PASSWORD => "123456",
+//    DB_DATABASE => "o911998h_mysql"
 ];
-
-/*DB_USER => "o911998h_mysql",
-    DB_PASSWORD => "123456",
-    DB_DATABASE => "o911998h_mysql"*/
