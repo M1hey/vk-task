@@ -6,10 +6,11 @@ $database_initialized = false;
 require_once dirname(__DIR__) . '/config/db_config.php';
 
 function db_check_init() {
-    global $users_db, $database_connections, $database_initialized;
+    global $remote_db, $local_db, $database_connections, $database_initialized;
 
     if (!$database_initialized) {/*Mocking multi database functionality*/
-        $database_connections[USERS_DB_SLAVE] = create_connection($users_db);
+        $db_params = 'vk-task.ru' == $_SERVER['HTTP_HOST'] ? $local_db : $remote_db;
+        $database_connections[USERS_DB_SLAVE] = create_connection($db_params);
         $database_connections[USERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];
         $database_connections[AUTH_TOKEN_DB] = $database_connections[USERS_DB_SLAVE];
         $database_connections[ORDERS_DB_MASTER] = $database_connections[USERS_DB_SLAVE];

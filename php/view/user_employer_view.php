@@ -26,14 +26,14 @@
                                    for="acc_balance">Баланс:</label>
                             <div id="acc_balance" class="col-md-2 col-sm-2 text-right">
                                 <?php global $acc_balance;
-                                echo format_money($acc_balance). '$'; ?></div>
+                                echo format_money($acc_balance) . '$'; ?></div>
                         </div>
                         <div class="row">
                             <label class="col-sm-6 col-md-offset-1 col-sm-6 col-sm-offset-2 text-nowrap"
                                    for="sys_balance">Баланс системы:</label>
                             <div id="sys_balance" class="col-md-2 col-sm-2">
                                 <?php global $sys_balance;
-                                echo format_money($sys_balance). '$'; ?></div>
+                                echo format_money($sys_balance) . '$'; ?></div>
                         </div>
                     </div>
                     <div class="action-button bordered-top text-center">
@@ -54,14 +54,14 @@
                                 global $order_amount, $order_title;
                                 echo "<h2 class=\"orders-title\">Ваши заказы:</h2>";
 
-                            foreach ($orders as $order) {
-                            $order_title = $order['title'];
-                            $order_amount = $order['reward'];
+                                foreach ($orders as $order) {
+                                    $order_title = $order['title'];
+                                    $order_amount = $order['reward'];
 
-                            include 'order_view.php';
-                            }
+                                    include 'order_view.php';
+                                }
                             } else {
-                            echo "<h2 class=\"orders-title\">У вас пока нет размещённых заказов</h2>";
+                                echo "<h2 class=\"orders-title\">У вас пока нет размещённых заказов</h2>";
                             }
                             ?>
                         </div>

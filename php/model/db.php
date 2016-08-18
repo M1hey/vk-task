@@ -119,6 +119,8 @@ function query($db, $query_statement, $types = '', $param = null) {
 
 function handleQuery($link, $query_func, $query, $params) {
     $result = $query_func();
+    error_log(" ----- INFO ----- " . $query . "\n"
+        . get_var_dump($params));
     if (!$result) {
         if (mysqli_errno($link)) {
             error_log("Can't execute query: " . mysqli_errno($link) . ': ' . mysqli_error($link) . "\n"

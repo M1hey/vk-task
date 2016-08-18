@@ -10,5 +10,5 @@ function process_employer($user) {
     $acc_balance = $user['balance'];
     $sys_balance = get_system_balance();
 
-    $orders = get_orders_by_emp_id($user);
+    $orders = get_orders_by_emp_id($user['id']);
 }
