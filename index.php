@@ -16,6 +16,7 @@ $routes = explode('/', $routes);
 $allowed_get_without_csrf = array('', 'login', 'user', '?logout');
 $controller_path = check_str($routes[1]);
 
+//TODO recover securely session if timed out
 if (!csrf_check($controller_path, $allowed_get_without_csrf)) {
     include_full_page('not_found_view.php');
     exit();
