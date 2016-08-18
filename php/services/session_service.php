@@ -50,7 +50,7 @@ function create_auth_token_for_user($user_id) {
         $_SESSION['selector'] = $selector;
         return true;
     } else {
-        error_log("Can't login user: \"" . check_str_trim($_POST['login']) . "\" because can't generate new token");
+        error_log("Can't login user: \"" . check_str_trim($_POST['username']) . "\" because can't generate new token");
         return false;
     }
 }

@@ -7,7 +7,7 @@ require_once dirname(__DIR__) . '/controllers/user_controller.php';
 
 function process_login() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $login = check_str_trim($_POST['login']);
+        $login = check_str_trim($_POST['username']);
         $user = get_user_by_login($login);
         $result['success'] = false;
 
