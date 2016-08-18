@@ -19,11 +19,11 @@ function get_user_view_ajax($user) {
 function get_view_name_by_type($user) {
     switch ($user['account_type']) {
         case USER_TYPE_WORKER:
-            return 'user_worker_view.html';
+            return 'user_worker_view.php';
         case USER_TYPE_EMPLOYER:
-            return 'user_employer_view.html';
+            return 'user_employer_view.php';
         default:
-            return 'not_found_view.html';
+            return 'not_found_view.php';
     }
 }
 

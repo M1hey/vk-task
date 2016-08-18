@@ -43,6 +43,6 @@ function process_login() {
         header('Content-Type: application/json');
         echo json_encode($result);
     } else {
-        include_full_page('login_view.html');
+        include_full_page('login_view.php');
     }
 }

@@ -72,7 +72,7 @@
                                     $order_amount = $order['reward'];
                                     $order_employer = $order['employer_name'];
 
-                                    include 'order_worker_view.html';
+                                    include 'order_worker_view.php';
                                 }
                             }
                             ?>

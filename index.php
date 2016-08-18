@@ -17,7 +17,7 @@ $allowed_get_without_csrf = array('', 'login', 'user', '?logout');
 $controller_path = check_str($routes[1]);
 
 if (!csrf_check($controller_path, $allowed_get_without_csrf)) {
-    include_full_page('not_found_view.html');
+    include_full_page('not_found_view.php');
     exit();
 };
 
@@ -31,7 +31,7 @@ if ($controller_path == 'login' || isset($_GET['logout'])) {
     } elseif ($controller_path == 'complete_order') {
         process_order_complete(get_user_or_go_to_login());
     } else {
-        include_full_page('not_found_view.html');
+        include_full_page('not_found_view.php');
     }
 }
 
@@ -41,7 +41,7 @@ function get_user_or_go_to_login() {
     if ($user) {
         return $user;
     } else {
-        include_full_page('login_view.html');
+        include_full_page('login_view.php');
         exit();
     }
 }

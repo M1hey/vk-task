@@ -58,7 +58,7 @@
                             $order_title = $order['title'];
                             $order_amount = $order['reward'];
 
-                            include 'order_view.html';
+                            include 'order_view.php';
                             }
                             } else {
                             echo "<h2 class=\"orders-title\">У вас пока нет размещённых заказов</h2>";
