@@ -11,7 +11,7 @@ function session_check() {
     session_start();
 
     if (isset($_GET['logout']) ||
-        (isset($_SESSION['PREV_REMOTEADDR']) && $_SERVER['REMOTE_ADDR'] !== $_SESSION['PREV_REMOTEADDR']) ||
+        (isset($_SESSION['PREV_REMOTEADDR']) && get_ip() !== $_SESSION['PREV_REMOTEADDR']) ||
         (isset($_SESSION['PREV_USERAGENT']) && $_SERVER['HTTP_USER_AGENT'] !== $_SESSION['PREV_USERAGENT'])
     ) {
         session_restart();
@@ -22,7 +22,7 @@ function session_check() {
     session_regenerate_id(true); // Generate a new session identifier
 
     $_SESSION['PREV_USERAGENT'] = $_SERVER['HTTP_USER_AGENT'];
-    $_SESSION['PREV_REMOTEADDR'] = $_SERVER['REMOTE_ADDR'];
+    $_SESSION['PREV_REMOTEADDR'] = get_ip();
 }
 
 function check_requests_per_period() {
