@@ -11,8 +11,9 @@ require_once 'php/controllers/order_controller.php';
 session_check();
 set_headers();
 
-$routes = explode('/', $_SERVER['REQUEST_URI']);
-$allowed_get_without_csrf = array('login', 'user', '?logout');
+$routes = str_replace('//', '/', $_SERVER['REQUEST_URI']);
+$routes = explode('/', $routes);
+$allowed_get_without_csrf = array('', 'login', 'user', '?logout');
 $controller_path = check_str($routes[1]);
 
 if (!csrf_check($controller_path, $allowed_get_without_csrf)) {

@@ -10,7 +10,7 @@ function create_csrf_token() {
 }
 
 function csrf_check($path, $allowed_get_without_csrf) {
-    if (!csrf_is_set()) {
+    if (!csrf_is_set_correctly()) {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             if (in_array($path, $allowed_get_without_csrf, true)) {
                 // allow only particular paths
@@ -27,7 +27,7 @@ function csrf_check($path, $allowed_get_without_csrf) {
     return true;
 }
 
-function csrf_is_set() {
+function csrf_is_set_correctly() {
     if (!isset($_SESSION[CSRF]) || !isset($_SERVER[CSRF])) {
         return false;
     }
