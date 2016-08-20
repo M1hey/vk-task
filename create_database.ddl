@@ -34,19 +34,6 @@ CREATE TABLE `orders` (
   AUTO_INCREMENT = 82
   DEFAULT CHARSET = utf8;
 
-CREATE TABLE `orders_transactions` (
-  `id`         INT(11)                              NOT NULL AUTO_INCREMENT,
-  `order_id`   INT(11)                              NOT NULL,
-  `worker_id`  INT(11)                              NOT NULL,
-  `reward`     INT(11)                              NOT NULL,
-  `commission` INT(11)                              NOT NULL,
-  `status`     ENUM ('order_reserved', 'completed') NOT NULL DEFAULT 'order_reserved',
-  PRIMARY KEY (`id`)
-)
-  ENGINE = InnoDB
-  AUTO_INCREMENT = 10
-  DEFAULT CHARSET = utf8;
-
 CREATE TABLE `system_account` (
   `id`                 INT(11) NOT NULL,
   `balance`            INT(11) NOT NULL DEFAULT '0',
@@ -57,7 +44,7 @@ CREATE TABLE `system_account` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `system_transactions` (
-  `id`         INT(11)                       NOT NULL,
+  `id`         INT(11)                       NOT NULL AUTO_INCREMENT,
   `order_id`   INT(11)                       NOT NULL,
   `commission` INT(11)                       NOT NULL,
   `status`     ENUM ('created', 'completed') NOT NULL DEFAULT 'created',
@@ -83,7 +70,7 @@ CREATE TABLE `users` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `users_transactions` (
-  `id`             INT(11)                       NOT NULL,
+  `id`             INT(11)                       NOT NULL AUTO_INCREMENT,
   `order_id`       INT(11)                       NOT NULL,
   `worker_id`      INT(11)                       NOT NULL,
   `reward_to_user` INT(11)                       NOT NULL

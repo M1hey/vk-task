@@ -23,34 +23,25 @@ function complete_order($order_id, $user_id) {
     }
 
     // everything correct
-    return start_order_transaction($order_id, $order['reward'], $order['commission'], $user_id);
-}
-
-// todo error log transaction status
-function start_order_transaction($order_id, $order_reward, $order_commission, $worker_id) {
     // order is no more accessible to other users
     // now we can do it advisedly
-    // create transaction
-    $transaction_id = query_multiple_params(ORDERS_DB_MASTER,
-        "INSERT INTO orders_transactions (order_id, worker_id, reward, commission) VALUES (?, ?, ?, ?)",
-        'iiii', $order_id, $worker_id, $order_reward, $order_commission);
-
-    if (!$transaction_id) {
+    $user_transaction_id = start_user_transaction($order_id, $order['reward'], $order['commission'], $user_id);
+    if (!$user_transaction_id || !process_user_transaction($user_id, $user_transaction_id)) {
         return false;
     }
 
-    return start_user_transaction($transaction_id, $order_id, $order_reward, $order_commission, $worker_id)
-    && process_user_transaction($worker_id, $transaction_id)
-    && start_system_transaction($transaction_id, $order_id, $order_commission)
-    && process_system_transaction($transaction_id, $order_id)
-    && mark_order_transaction_completed($order_id, $transaction_id);
+    $system_transaction_id = start_system_transaction($order_id, $order['commission']);
+    if (!$system_transaction_id || !process_system_transaction($system_transaction_id, $order_id)) {
+        return false;
+    }
+
+    return mark_order_completed($order_id);
 }
 
-
-function start_user_transaction($transaction_id, $order_id, $order_reward, $order_commission, $worker_id) {
+function start_user_transaction($order_id, $order_reward, $order_commission, $worker_id) {
     $success = query_multiple_params(USERS_DB_MASTER,
-        "INSERT INTO users_transactions (id, order_id, worker_id, reward_to_user) VALUES (?, ?, ?, ?)",
-        'iiii', $transaction_id, $order_id, $worker_id, $order_reward - $order_commission);
+        "INSERT INTO users_transactions (order_id, worker_id, reward_to_user) VALUES (?, ?, ?)",
+        'iii', $order_id, $worker_id, $order_reward - $order_commission);
 
     if (!$success) {
         error_log("Can't start user transaction #" . $transaction_id . ", order#" . $order_id);
@@ -78,12 +69,13 @@ function process_user_transaction($worker_id, $transaction_id) {
     return $success;
 }
 
-function start_system_transaction($transaction_id, $order_id, $order_commission) {
+function start_system_transaction($order_id, $order_commission) {
     $success = query_multiple_params(SYSTEM_DB,
-        "INSERT INTO system_transactions(id, order_id, commission) VALUES (?, ?, ?)",
-        'iii', $transaction_id, $order_id, $order_commission);
+        "INSERT INTO system_transactions(order_id, commission) VALUES (?, ?)",
+        'ii', $order_id, $order_commission);
+
     if (!$success) {
-        error_log("Can't start system transaction #" . $transaction_id . ", order#" . $order_id);
+        error_log("Can't start system transaction order#" . $order_id);
     }
 
     return $success;
@@ -108,18 +100,15 @@ function process_system_transaction($transaction_id, $order_id) {
     return $success;
 }
 
-function mark_order_transaction_completed($order_id, $transaction_id) {
+function mark_order_completed($order_id) {
     $success = query_multiple_params(ORDERS_DB_MASTER,
-        "UPDATE orders AS o, orders_transactions AS t 
-                SET 
-                    o.status = 'completed',
-                    t.status = 'completed'
+        "UPDATE orders AS o 
+                  SET o.status = 'completed'
                 WHERE o.id = ? 
-                  AND o.status = 'reserved'
-                  AND t.id = ?", 'ii', $order_id, $transaction_id);
+                  AND o.status = 'reserved'", 'i', $order_id);
 
     if (!$success) {
-        error_log("Can't mark order #" . $order_id . " transaction #" . $transaction_id . " finished");
+        error_log("Can't mark order #" . $order_id . " completed");
     }
 
     return $success;
@@ -256,7 +245,7 @@ function recover_order_completion_from_failure() {
                 }
             }
 
-            if (mark_order_transaction_completed($order_id, $transaction_id)) {
+            if (mark_order_completed($order_id, $transaction_id)) {
                 error_log("Order #" . $order_id . " completed");
             }
         }
