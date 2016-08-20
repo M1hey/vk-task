@@ -197,34 +197,18 @@ function recover_order_completion_from_failure() {
 
             error_log("--Started recovery for order #" . $order_id);
 
-            // check order transaction
-            $order_transaction = single_result(query(ORDERS_DB_SLAVE,
-                "SELECT id, worker_id, reward, commission, status FROM orders_transactions 
-                    WHERE order_id = ?", 'i', $order_id));
-            // assume that $order_transaction['status'] != 'completed' because order.status != 'completed'
-            if (!$order_transaction) {
-                if (!start_order_transaction($order_id, $order_reward, $order_commission, $worker_id)) {
-                    error_log('Can\'t recover order #' . $order_id . ' from start transaction.');
-                } else {
-                    error_log("Order #" . $order_id . " completed");
-                }
-                continue;
-            }
-
-            // check if user transaction present
-            $transaction_id = $order_transaction['id'];
             // check user transaction
             $user_transaction = single_result(query(USERS_DB_SLAVE,
-                "SELECT id, order_id, worker_id, reward, status FROM orders_transactions 
-                        WHERE id = ?", 'i', $transaction_id));
+                "SELECT id, order_id, worker_id, reward_to_user, status FROM users_transactions 
+                        WHERE order_id = ?", 'i', $order_id));
             if (!$user_transaction) {
-                if (!(start_user_transaction($transaction_id, $order_id, $order_reward, $order_commission, $order_reward)
-                    && process_user_transaction($worker_id, $transaction_id))
+                $user_transaction_id = start_user_transaction($order_id, $order_reward, $order_commission, $order_reward);
+                if (!($user_transaction_id && process_user_transaction($worker_id, $user_transaction_id))
                 ) {
                     continue;
                 }
             } elseif ($user_transaction['status'] != 'completed') {
-                if (!process_user_transaction($worker_id, $transaction_id)) {
+                if (!process_user_transaction($worker_id, $user_transaction['id'])) {
                     continue;
                 }
             }
@@ -232,20 +216,20 @@ function recover_order_completion_from_failure() {
             // check system transaction
             $system_transaction = single_result(query(SYSTEM_DB,
                 "SELECT id, order_id, commission, status, status FROM system_transactions 
-                                WHERE id = ?", 'i', $transaction_id));
+                                WHERE order_id = ?", 'i', $order_id));
             if (!$system_transaction) {
-                if (!(start_system_transaction($transaction_id, $order_id, $order_commission)
-                    && process_system_transaction($transaction_id, $order_id))
+                $system_transaction_id = start_system_transaction($order_id, $order_commission);
+                if (!($system_transaction_id && process_system_transaction($system_transaction_id, $order_id))
                 ) {
                     continue;
                 }
             } elseif ($system_transaction['status'] != 'completed') {
-                if (!process_system_transaction($transaction_id, $order_id)) {
+                if (!process_system_transaction($system_transaction['id'], $order_id)) {
                     continue;
                 }
             }
 
-            if (mark_order_completed($order_id, $transaction_id)) {
+            if (mark_order_completed($order_id)) {
                 error_log("Order #" . $order_id . " completed");
             }
         }
