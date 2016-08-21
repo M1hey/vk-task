@@ -6,7 +6,7 @@ CREATE TABLE `auth_tokens` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_tokens_user_id_uindex` (`user_id`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   AUTO_INCREMENT = 12
   DEFAULT CHARSET = utf8;
 
@@ -30,7 +30,7 @@ CREATE TABLE `orders` (
   `commission`    INT(11)                                           DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   AUTO_INCREMENT = 82
   DEFAULT CHARSET = utf8;
 
@@ -40,7 +40,7 @@ CREATE TABLE `system_account` (
   `commission_percent` INT(11) NOT NULL DEFAULT '5',
   PRIMARY KEY (`id`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `system_transactions` (
@@ -50,7 +50,7 @@ CREATE TABLE `system_transactions` (
   `status`     ENUM ('created', 'completed') NOT NULL DEFAULT 'created',
   PRIMARY KEY (`id`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `users` (
@@ -65,7 +65,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_login_uindex` (`login`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
@@ -78,7 +78,7 @@ CREATE TABLE `users_transactions` (
   `status`         ENUM ('created', 'completed') NOT NULL DEFAULT 'created',
   PRIMARY KEY (`id`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `order_creation_transactions` (
@@ -89,6 +89,6 @@ CREATE TABLE `order_creation_transactions` (
   `status`      ENUM ('order_created', 'order_paid') NOT NULL DEFAULT 'order_created',
   PRIMARY KEY (`id`)
 )
-  ENGINE = InnoDB
+  ENGINE = myisam
   AUTO_INCREMENT = 23
   DEFAULT CHARSET = utf8;
