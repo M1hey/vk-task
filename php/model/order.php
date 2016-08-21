@@ -25,76 +25,70 @@ function complete_order($order_id, $user_id) {
     // everything correct
     // order is no more accessible to other users
     // now we can do it advisedly
-    $user_transaction_id = start_user_transaction($order_id, $order['reward'], $order['commission'], $user_id);
-    if (!$user_transaction_id || !process_user_transaction($user_id, $user_transaction_id)) {
+    $reward_to_user = $order['reward'] - $order['commission'];
+    $reward_credited = add_credit_user_operation($order_id, $reward_to_user, $user_id);
+    if (!$reward_credited || !increase_user_balance($user_id, $reward_to_user)) {
         return false;
+    } else {
+        // wo could make a response from here
     }
 
-    $system_transaction_id = start_system_transaction($order_id, $order['commission']);
-    if (!$system_transaction_id || !process_system_transaction($system_transaction_id, $order_id)) {
+    $system_operation_added = add_system_credit_operation($order_id, $order['commission']);
+    if (!$system_operation_added || !increase_system_balance($order_id, $order['commission'])) {
         return false;
     }
 
     return mark_order_completed($order_id);
 }
 
-function start_user_transaction($order_id, $order_reward, $order_commission, $worker_id) {
+function add_credit_user_operation($order_id, $reward_to_user, $worker_id) {
     $success = query_multiple_params(USERS_DB_MASTER,
-        "INSERT INTO users_transactions (order_id, worker_id, reward_to_user) VALUES (?, ?, ?)",
-        'iii', $order_id, $worker_id, $order_reward - $order_commission);
+        "INSERT INTO credit_operations (order_id, worker_id, reward_to_user) VALUES (?, ?, ?)",
+        'iii', $order_id, $worker_id, $reward_to_user);
 
     if (!$success) {
-        error_log("Can't start user transaction #" . $transaction_id . ", order#" . $order_id);
+        error_log("Can't add user operation by order# " . $order_id);
     }
 
     return $success;
 }
 
-function process_user_transaction($worker_id, $transaction_id) {
+function increase_user_balance($worker_id, $reward_to_user) {
     // add money to account
     $success = query_multiple_params(USERS_DB_MASTER,
-        "UPDATE users AS u, users_transactions AS t 
-                SET 
-                  u.balance = u.balance + COALESCE(t.reward_to_user, 0), 
-                  t.status = 'completed'
-                WHERE u.id = ? 
-                  AND t.id = ? 
-                  AND t.status = 'created'",
-        'ii', $worker_id, $transaction_id);
+        "UPDATE users AS u 
+            SET u.balance = u.balance + ?
+          WHERE u.id = ?",
+        'ii', $reward_to_user, $worker_id);
 
     if (!$success) {
-        error_log("Can't process user transaction #" . $transaction_id . ", user#" . $worker_id);
+        error_log("Can't add reward to user user#" . $worker_id);
     }
 
     return $success;
 }
 
-function start_system_transaction($order_id, $order_commission) {
+function add_system_credit_operation($order_id, $order_commission) {
     $success = query_multiple_params(SYSTEM_DB,
-        "INSERT INTO system_transactions(order_id, commission) VALUES (?, ?)",
+        "INSERT INTO system_credit_operations(order_id, commission) VALUES (?, ?)",
         'ii', $order_id, $order_commission);
 
     if (!$success) {
-        error_log("Can't start system transaction order#" . $order_id);
+        error_log("Can't add system credit operation for order#" . $order_id);
     }
 
     return $success;
 }
 
-function process_system_transaction($transaction_id, $order_id) {
+function increase_system_balance($order_id, $amount) {
     // add commission to system
     $success = query_multiple_params(USERS_DB_MASTER,
-        "UPDATE system_account, system_transactions AS t
-                SET 
-                  system_account.balance = system_account.balance + t.commission,
-                  t.status = 'completed'
-                WHERE t.id = ?  
-                  AND t.order_id = ? 
-                  AND t.status = 'created'
-                  AND system_account.id = 1", 'ii', $transaction_id, $order_id);
+        "UPDATE system_account
+            SET system_account.balance = system_account.balance + COALESCE(?, 0)
+          WHERE system_account.id = 1", 'i', $amount);
 
     if (!$success) {
-        error_log("Can't process system transaction #" . $transaction_id . ", order#" . $order_id);
+        error_log("Can't increase system balance (" . $amount . ") from order#" . $order_id);
     }
 
     return $success;
@@ -103,9 +97,9 @@ function process_system_transaction($transaction_id, $order_id) {
 function mark_order_completed($order_id) {
     $success = query_multiple_params(ORDERS_DB_MASTER,
         "UPDATE orders AS o 
-                  SET o.status = 'completed'
-                WHERE o.id = ? 
-                  AND o.status = 'reserved'", 'i', $order_id);
+            SET o.status = 'completed'
+          WHERE o.id = ? 
+            AND o.status = 'reserved'", 'i', $order_id);
 
     if (!$success) {
         error_log("Can't mark order #" . $order_id . " completed");
@@ -202,13 +196,13 @@ function recover_order_completion_from_failure() {
                 "SELECT id, order_id, worker_id, reward_to_user, status FROM users_transactions 
                         WHERE order_id = ?", 'i', $order_id));
             if (!$user_transaction) {
-                $user_transaction_id = start_user_transaction($order_id, $order_reward, $order_commission, $order_reward);
-                if (!($user_transaction_id && process_user_transaction($worker_id, $user_transaction_id))
+                $user_transaction_id = add_credit_user_operation($order_id, $order_reward, $order_commission, $order_reward);
+                if (!($user_transaction_id && increase_user_balance($worker_id, $user_transaction_id))
                 ) {
                     continue;
                 }
             } elseif ($user_transaction['status'] != 'completed') {
-                if (!process_user_transaction($worker_id, $user_transaction['id'])) {
+                if (!increase_user_balance($worker_id, $user_transaction['id'])) {
                     continue;
                 }
             }
@@ -218,13 +212,13 @@ function recover_order_completion_from_failure() {
                 "SELECT id, order_id, commission, status, status FROM system_transactions 
                                 WHERE order_id = ?", 'i', $order_id));
             if (!$system_transaction) {
-                $system_transaction_id = start_system_transaction($order_id, $order_commission);
-                if (!($system_transaction_id && process_system_transaction($system_transaction_id, $order_id))
+                $system_transaction_id = add_system_credit_operation($order_id, $order_commission);
+                if (!($system_transaction_id && increase_system_balance($system_transaction_id, $order_id))
                 ) {
                     continue;
                 }
             } elseif ($system_transaction['status'] != 'completed') {
-                if (!process_system_transaction($system_transaction['id'], $order_id)) {
+                if (!increase_system_balance($system_transaction['id'], $order_id)) {
                     continue;
                 }
             }
