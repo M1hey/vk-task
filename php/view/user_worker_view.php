@@ -22,11 +22,20 @@
                             <h3 class="account-name col-md-8 col-md-offset-1">
                                 <?php global $account_name;
                                 echo $account_name; ?></h3>
+                        </div>
+                        <div class="row">
                             <label class="col-md-6 col-md-offset-1 col-sm-6 col-sm-offset-2"
                                    for="acc_balance">Баланс:</label>
-                            <div id="acc_balance" class="col-md-2 col-sm-2 text-right">
-                                <?php global $acc_balance;
-                                echo format_money($acc_balance) . '$'; ?></div>
+                            <div class="col-md-2 col-sm-2 text-right group-space-right">
+                                <div id="acc_balance">
+                                    <?php global $acc_balance;
+                                    echo format_money($acc_balance) . '$'; ?>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <span id="update_acc_balance_btn" class="glyphicon glyphicon-refresh"
+                                      aria-hidden="false"></span>
+                            </div>
                         </div>
                         <div class="row">
                             <label class="col-sm-6 col-md-offset-1 col-sm-6 col-sm-offset-2 text-nowrap"
@@ -78,7 +87,9 @@
                             ?>
                         </div>
                         <div class="text-center">
-                            <button id="load_more_btn" class="btn btn-link" data-loading-text="Загрузка ...">Загрузить ещё</button>
+                            <button id="load_more_btn" class="btn btn-link" data-loading-text="Загрузка ...">Загрузить
+                                ещё
+                            </button>
                         </div>
                     </div>
                 </div>

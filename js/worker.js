@@ -2,6 +2,37 @@ var user_balance = 0;
 var last_order_id = 0;
 
 $(document).ready(function () {
+    create_load_more_handler();
+    create_update_acc_balance_handler();
+    override_orders_submit();
+});
+
+function create_update_acc_balance_handler() {
+    $("#update_acc_balance_btn").click(function () {
+        $.ajax({
+            type: 'GET',
+            url: 'update_acc_balance',
+            success: function (result, status, jqXHR) {
+                console.log(result);
+                if ('application/json' == jqXHR.getResponseHeader("content-type")) {
+                    if (result['success']) {
+                        update_user_balance(result['new_balance']);
+                    } else {
+                        show_orders_error(result['msg']);
+                    }
+                } else {
+                    show_orders_error("Сервер недоступен");
+                }
+            },
+            error: function (qxXHR, status, error) {
+                msg = ("" == error) ? "Сервер недоступен" : status + ": " + error;
+                show_orders_error(msg);
+            }
+        });
+    });
+}
+
+function create_load_more_handler() {
     $("#load_more_btn").click(function () {
         var load_more_btn = $(this);
         load_more_btn.button('loading');
@@ -36,9 +67,7 @@ $(document).ready(function () {
             }
         });
     });
-
-    override_orders_submit();
-});
+}
 
 function override_orders_submit() {
     $(".complete-btn").click(function () {

@@ -2,6 +2,10 @@
     display: none;
 }
 
+#update_acc_balance_btn {
+    cursor: pointer;
+}
+
 .order {
     margin-bottom: 12px;
 }

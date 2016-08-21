@@ -58,6 +58,10 @@ h3 {
 .action-button {
 }
 
+.group-space-right {
+    margin-right: 17px;
+}
+
 /* Form elements */
 .well {
     padding: 12px !important;

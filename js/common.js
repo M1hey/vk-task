@@ -7,7 +7,8 @@ $(document).ready(function () {
 
 function setup_token(token) {
     $.ajaxSetup({
-        headers: {'X-CSRF': token}
+        headers: {'X-CSRF': token,
+        'X-AJAX' : true}
     });
 }
 
