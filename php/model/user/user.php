@@ -36,11 +36,11 @@ function get_updated_user_balance($user_id, $prev_balance) {
 
     do {
         $user_credit_balance = single_result(query(USERS_DB_SLAVE,
-            "SELECT SUM(reward_to_user) FROM credit_operations
-            WHERE worker_id = ?", 'i', $user_id));
+            "SELECT SUM(reward_to_user) AS balance FROM credit_operations
+              WHERE worker_id = ?", 'i', $user_id));
 
         if ($user_credit_balance) {
-            $user_credit_balance = intval($user_credit_balance['SUM(reward_to_user)']);
+            $user_credit_balance = intval($user_credit_balance['balance']);
         } else {
             $tryCount++;
             continue;

@@ -3,20 +3,7 @@
 require_once 'db.php';
 
 function complete_order($order_id, $user_id) {
-    $order_reserved = query_multiple_params(ORDERS_DB_MASTER,
-        "UPDATE orders
-            SET worker_id = ?, status = 'reserved' 
-            WHERE id = ? 
-              AND status = 'paid'
-              AND orders.employer_id != ?",
-        'iii', $user_id, $order_id, $user_id);
-
-    if (!$order_reserved) {
-        return false;
-    }
-
-    $order = single_result(query_multiple_params(ORDERS_DB_MASTER,
-        "SELECT reward, commission FROM orders WHERE id = ? AND worker_id = ?", 'ii', $order_id, $user_id));
+    $order = lock_order($order_id, $user_id);
 
     if (!$order) {
         return false;
@@ -26,11 +13,11 @@ function complete_order($order_id, $user_id) {
     // order is no more accessible to other users
     // now we can do it advisedly
     $reward_to_user = $order['reward'] - $order['commission'];
-    $reward_credited = add_credit_user_operation($order_id, $reward_to_user, $user_id);
+    $reward_credited = add_credit_operation($order_id, $reward_to_user, $user_id);
     if (!$reward_credited || !increase_user_balance($user_id, $reward_to_user)) {
         return false;
     } else {
-        // wo could make a response from here
+        // TODO we could make a response from here
     }
 
     $system_operation_added = add_system_credit_operation($order_id, $order['commission']);
@@ -41,13 +28,42 @@ function complete_order($order_id, $user_id) {
     return mark_order_completed($order_id);
 }
 
-function add_credit_user_operation($order_id, $reward_to_user, $worker_id) {
+function lock_order($order_id, $user_id) {
+    $order_reserved = query_multiple_params(ORDERS_DB_MASTER,
+        "UPDATE orders
+            SET worker_id = ?, status = 'reserved' 
+            WHERE id = ? 
+              AND status = 'paid'
+              AND orders.employer_id != ?",
+        'iii', $user_id, $order_id, $user_id);
+
+    if (!$order_reserved) {
+        return false;
+    } else {
+        // we could return "order in process" from here
+    }
+
+    $order = single_result(query_multiple_params(ORDERS_DB_MASTER,
+        "SELECT reward, commission FROM orders WHERE id = ? AND worker_id = ?", 'ii', $order_id, $user_id));
+
+    if (!$order) {
+//        locked, but can't get info
+        return false;
+    }
+//    let's save to bytes :D
+    $order['id'] = $order_id;
+    $order['worker_id'] = $user_id;
+
+    return $order;
+}
+
+function add_credit_operation($order_id, $reward_to_user, $worker_id) {
     $success = query_multiple_params(USERS_DB_MASTER,
         "INSERT INTO credit_operations (order_id, worker_id, reward_to_user) VALUES (?, ?, ?)",
         'iii', $order_id, $worker_id, $reward_to_user);
 
     if (!$success) {
-        error_log("Can't add user operation by order# " . $order_id);
+        error_log("Can't add credit operation user#$worker_id by order#$order_id");
     }
 
     return $success;
@@ -196,7 +212,7 @@ function recover_order_completion_from_failure() {
                 "SELECT id, order_id, worker_id, reward_to_user, status FROM users_transactions 
                         WHERE order_id = ?", 'i', $order_id));
             if (!$user_transaction) {
-                $user_transaction_id = add_credit_user_operation($order_id, $order_reward, $order_commission, $order_reward);
+                $user_transaction_id = add_credit_operation($order_id, $order_reward, $order_commission, $order_reward);
                 if (!($user_transaction_id && increase_user_balance($worker_id, $user_transaction_id))
                 ) {
                     continue;
